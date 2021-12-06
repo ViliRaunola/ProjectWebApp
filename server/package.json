@@ -16,6 +16,8 @@
     "express-validator": "^6.13.0",
     "mongoose": "^6.0.14",
     "morgan": "~1.9.1",
+    "passport": "^0.5.0",
+    "passport-jwt": "^4.0.0",
     "password-validator": "^5.2.1"
   },
   "devDependencies": {

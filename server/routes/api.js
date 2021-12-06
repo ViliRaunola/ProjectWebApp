@@ -1,11 +1,13 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../models/User')
+var Post = require('../models/Post')
 var passwordValidator = require('password-validator');
 var schema = new passwordValidator(); //Passport validation usage source: https://www.npmjs.com/package/password-validator
 var bcrypt = require("bcryptjs");
 const { body, validationResult } = require('express-validator'); //Source on express validator: https://express-validator.github.io/docs/
 const jwt = require("jsonwebtoken");
+const passport = require('passport'); //Source on passport usage: http://www.passportjs.org/packages/passport-jwt/
 
 //Giving requirements to the password
 schema
@@ -14,6 +16,29 @@ schema
     .has().lowercase()
     .has().digits()
     .has().symbols()
+
+    router.post(
+        '/post/add', 
+        passport.authenticate('jwt', {session: false}),
+        (req, res, next) => {
+            res.status(200).json({email: req.user.email});
+    });
+
+
+//For getting all the posts from the database
+router.get('/post/all', (req, res, next) => {
+    Post.find({}, (err, posts) => {
+        if(err){
+            console.log("Error occured during finding posts: " + err);
+            throw err;
+        }
+        if(posts.length != 0){
+            return res.json({posts: posts});
+        }else{
+            return res.status(403).json({message: 'No posts were found'})
+        }
+    });
+});
 
 //For registering a new user to the database
 router.post(
@@ -82,7 +107,7 @@ router.post('/user/login', (req, res, next) => {
                 jwt.sign(
                     jwtPayload,
                     process.env.SECRET,
-                    {expiresIn: '1h'}, //Token is set to expire in 1h. So the user will have to refresh it or they will have to login again. Source: https://www.npmjs.com/package/jsonwebtoken
+                    // {expiresIn: '1h'}, //Token is set to expire in 1h. So the user will have to refresh it or they will have to login again. Source: https://www.npmjs.com/package/jsonwebtoken
                     (err, token) => {
                         if(err) throw err;
                         res.status(200).json({success: true, token: token});
