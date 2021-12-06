@@ -5,6 +5,8 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 var config = require('./config/database')
 require('dotenv').config(); //Used to access the custom enviroment variable
+const passport = require('passport');
+
 
 //const dataBaseConnection = process.env.MONGO_URL || 'mongodb://localhost:27017/week11';
 
@@ -19,6 +21,10 @@ db.on("error", console.error.bind(console, "Mongo DB connection error"));
 var apiRouter = require('./routes/api')
 
 var app = express();
+
+//For the passport. Source: https://stackoverflow.com/questions/60034257/typeerror-req-login-is-not-a-function-passport-js
+app.use(passport.initialize());
+require('./config/passport')(passport);
 
 app.use(logger('dev'));
 app.use(express.json());
