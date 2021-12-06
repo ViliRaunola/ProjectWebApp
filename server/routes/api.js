@@ -5,6 +5,7 @@ var passwordValidator = require('password-validator');
 var schema = new passwordValidator(); //Passport validation usage source: https://www.npmjs.com/package/password-validator
 var bcrypt = require("bcryptjs");
 const { body, validationResult } = require('express-validator'); //Source on express validator: https://express-validator.github.io/docs/
+const jwt = require("jsonwebtoken");
 
 //Giving requirements to the password
 schema
@@ -59,6 +60,38 @@ router.post(
                 });
             });
         }
+    });
+});
+
+//Route for user to login to the service
+router.post('/user/login', (req, res, next) => {
+    //Start by going through the database to find a matching user with the given email
+    User.findOne({email: req.body.email}, (err, user) => {
+        if(err) throw err;
+        //No user was found with mathing email
+        if(!user) return res.status(403).json({success: false, message: "Invalid credentials"});
+        //Bcrypt is used to crypt the given password and it is then compared to the hash that is found in the database.
+        //If they match a jwt token is sent to the front end aka the user is who they claim to be.
+        bcrypt.compare(req.body.password, user.password, (err, isMatch) => {
+            if(err) throw err;
+            if(isMatch){
+                const jwtPayload = {
+                    id: user._id,
+                    email: user.email
+                }
+                jwt.sign(
+                    jwtPayload,
+                    process.env.SECRET,
+                    {expiresIn: '1h'}, //Token is set to expire in 1h. So the user will have to refresh it or they will have to login again. Source: https://www.npmjs.com/package/jsonwebtoken
+                    (err, token) => {
+                        if(err) throw err;
+                        res.status(200).json({success: true, token: token});
+                    }
+                );
+            }else{
+                res.status(403).json({success: false, message: "Invalid credentials"});
+            }
+        });
     });
 });
 
