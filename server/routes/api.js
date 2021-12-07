@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var User = require('../models/User')
 var Post = require('../models/Post')
+var Comment = require('../models/Comment')
 var passwordValidator = require('password-validator');
 var schema = new passwordValidator(); //Passport validation usage source: https://www.npmjs.com/package/password-validator
 var bcrypt = require("bcryptjs");
@@ -16,6 +17,55 @@ schema
     .has().lowercase()
     .has().digits()
     .has().symbols()
+
+
+
+
+//Gets all of the comments related to the post which id was given in the parameters.
+router.get('/comment/:postId', (req, res, next) =>{
+    Comment.find({'postId': req.params.postId}, (err, comments) => {
+        if(err){
+            console.log("Error occured during finding comments: " + err);
+            throw err;
+        }
+        if(comments.length != 0){
+            return res.json({comments: comments});
+        }else{
+            return res.json({message: 'No comments were found'})
+        }
+    });
+});
+
+//Adding a comment to the database. 
+//Links the id's between the comment, creator and the post
+router.post('/comment/add', 
+            passport.authenticate('jwt', {session: false}),
+            (req, res, next) => {
+                //Adding the comment to database
+                Comment.create({
+                    userId: req.body.creator,
+                    postId: req.body.postId,
+                    content: req.body.content
+                },
+                (err, createdComment) => {
+                    if(err) throw err;
+                    //Adding the comment id to user document that created it
+                    User.findOneAndUpdate({'_id': req.body.creator},
+                    { $push: {'comments': createdComment._id}}, 
+                    {timestamps:false}, //Making sure that the time stamp is not updated in this case, since I want it to update only when user information is changed
+                    (err, user) => {
+                        if(err) throw err;
+                        //Adding the created comment id also to the post that it is linked to
+                        Post.findOneAndUpdate({'_id': req.body.postId},
+                            { $push: {'comments': createdComment._id}}, 
+                            {timestamps:false}, 
+                            (err, comment) => {
+                                if(err) throw err;
+                                return  res.status(200).json({success: true});                        
+                        });
+                    })
+                })
+});
 
 //Authorised user can add posts. 
 //When post is added its Id is saved to the user document.
