@@ -9,6 +9,7 @@ let postSchema = new Schema({
     },
     upVotes: [mongoose.ObjectId],
     downVotes: [mongoose.ObjectId],
+    creator: mongoose.ObjectId,
     comments: [mongoose.ObjectId]
 },{timestamps: true});
 

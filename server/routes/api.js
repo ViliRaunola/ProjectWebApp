@@ -17,13 +17,32 @@ schema
     .has().digits()
     .has().symbols()
 
-    router.post(
-        '/post/add', 
-        passport.authenticate('jwt', {session: false}),
-        (req, res, next) => {
-            res.status(200).json({email: req.user.email});
-    });
+//Authorised user can add posts. 
+//When post is added its Id is saved to the user document.
+router.post(
+    '/post/add', 
+    passport.authenticate('jwt', {session: false}),
+    (req, res, next) => {
+        //Adding the post to database
+        Post.create({
+            content: req.body.content,
+            creator: req.body.creator
+        },
+        (err, createdPost) => {
+            if(err) throw err;
+            //Adding the post Id to the user document.
+            User.findOneAndUpdate({'_id': req.body.creator},
+                                { $push: {'posts': createdPost._id}}, 
+                                {timestamps:false}, //Making sure that the time stamp is not updated in this case, since I want it to update only when user information is changed
+                                (err, user) => {
+                                    if(err) throw err;
+                                    return  res.status(200).json({success: true});
+                                });
 
+            
+        });
+    
+});
 
 //For getting all the posts from the database
 router.get('/post/all', (req, res, next) => {
@@ -79,7 +98,7 @@ router.post(
                         },
                         (err, ok) => {
                             if(err) throw err;
-                            return  res.status(200).json({success: true});;
+                            return  res.status(200).json({success: true});
                         }
                     );
                 });
