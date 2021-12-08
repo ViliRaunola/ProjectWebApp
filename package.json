@@ -13,5 +13,8 @@
     "build": "cd client && npm run build"
   },
   "author": "Vili Raunola",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "materialize-css": "^1.0.0-rc.2"
+  }
 }

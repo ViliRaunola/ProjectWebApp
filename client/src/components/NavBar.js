@@ -50,7 +50,6 @@ const ResponsiveAppBar = () => {
                 {/* The haburger menu that is displayed on mobile */}
                 <IconButton
                 size="small"
-                aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
                 onClick={handleOpenNavMenu}
@@ -76,7 +75,7 @@ const ResponsiveAppBar = () => {
                     display: { xs: 'block', md: 'none' },
                 }}
                 >
-                    {/* Looping through the items that are specified to be pages in burger*/}
+                    {/* Listing menu items that are same as the normal desktop navigation*/}
                 <MenuItem 
                     component={RouterLink} 
                     to='/' 
@@ -97,6 +96,13 @@ const ResponsiveAppBar = () => {
                     color="inherit" 
                     style={{padding: '10px'}}>
                         Profile
+                </MenuItem>
+                <MenuItem 
+                    component={RouterLink} 
+                    to='/login' 
+                    color="inherit" 
+                    style={{padding: '10px'}}>
+                        Login
                 </MenuItem>
                 </Menu>
             </Box>
@@ -122,6 +128,13 @@ const ResponsiveAppBar = () => {
                     color="inherit" 
                     style={{padding: '10px'}}>
                         Profile
+                </MenuItem>
+                <MenuItem 
+                    component={RouterLink} 
+                    to='/login' 
+                    color="inherit" 
+                    style={{padding: '10px'}}>
+                        Login
                 </MenuItem>
             </Box>
             </Toolbar>
