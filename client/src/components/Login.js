@@ -17,6 +17,8 @@ function Login() {
         setUser({...user, [event.target.id]: event.target.value})
     }
 
+    //After form is submitted it is sent to server. If the authentication succeeded JWT is saved to session storage.
+    //Otherwise an error is shown that is received from the server.
     const submitForm = (event) => {
         event.preventDefault()
 
@@ -33,7 +35,6 @@ function Login() {
                 }else{
                     setErr(data.message)
                 }
-            
         }) 
     }
 
@@ -59,7 +60,7 @@ function Login() {
             </div>
 
             {err && (<Typography
-                variant='h6'
+                variant='h7'
                 color='red'
                 component='h3'
                 padding={2}
