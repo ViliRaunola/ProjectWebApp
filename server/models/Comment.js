@@ -10,6 +10,10 @@ let commentSchema = new Schema({
     content: {
         type: String,
         required: true
+    },
+    creatorUsername: {
+        type: String,
+        required: true
     }
 },{timestamps: true});
 

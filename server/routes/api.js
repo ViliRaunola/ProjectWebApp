@@ -55,9 +55,10 @@ router.post('/comment/add',
             (req, res, next) => {
                 //Adding the comment to database
                 Comment.create({
-                    userId: req.body.creator,
+                    userId: req.user._id,
                     postId: req.body.postId,
-                    content: req.body.content
+                    content: req.body.content,
+                    creatorUsername: req.user.username
                 },
                 (err, createdComment) => {
                     if(err) throw err;
@@ -89,7 +90,8 @@ router.post(
         Post.create({
             content: req.body.content,
             title: req.body.title,
-            creator: req.user._id
+            creator: req.user._id,
+            creatorUsername: req.user.username
         },
         (err, createdPost) => {
             if(err) throw err;
@@ -121,6 +123,21 @@ router.get('/post/all', (req, res, next) => {
         }
     });
 });
+
+//Gets requested post based on the id
+router.get('/post/:id', (req, res, next) => {
+    Post.findOne({'_id': req.params.id}, (err, post) => {
+        if(err){
+            console.log("Error occured during finding post: " + err);
+            throw err;
+        }
+        if(post){
+            return res.json({post: post});
+        }else{
+            return res.status(403).json({message: "Didn't find a post with id:" + req.params['id']})
+        }
+    })
+})
 
 //For registering a new user to the database
 router.post(
