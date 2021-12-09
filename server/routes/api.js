@@ -88,7 +88,8 @@ router.post(
         //Adding the post to database
         Post.create({
             content: req.body.content,
-            creator: req.body.creator
+            title: req.body.title,
+            creator: req.user._id
         },
         (err, createdPost) => {
             if(err) throw err;
