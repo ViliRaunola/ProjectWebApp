@@ -7,6 +7,10 @@ let postSchema = new Schema({
         type: String,
         required: true
     },
+    title: {
+        type: String,
+        required: true
+    },
     upVotes: [mongoose.ObjectId],
     downVotes: [mongoose.ObjectId],
     creator: mongoose.ObjectId,
