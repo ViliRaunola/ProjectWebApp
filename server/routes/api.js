@@ -19,7 +19,19 @@ schema
     .has().symbols()
 
 
-
+//Route for getting user information.
+//If the JWT is valid the passport.authenticate will return the user from database.
+//I will not send the full user object to the front end since it will contain the hashed password.
+router.get('/user/profile',
+            passport.authenticate('jwt', {session: false}),
+            (req, res, next) => {
+                return res.json({user: {id: req.user._id, 
+                                        name: req.user.name,
+                                        email: req.user.email,
+                                        username: req.user.username,
+                                        created: req.user.createdAt,
+                                        updated: req.user.updatedAt}})
+            });
 
 //Gets all of the comments related to the post which id was given in the parameters.
 router.get('/comment/:postId', (req, res, next) =>{
@@ -120,7 +132,7 @@ router.post(
     const errors = validationResult(req); //Contains the errors that happened during the email check
     const errors_password = schema.validate(req.body.password, {list: true}); 
     if(!errors.isEmpty() || !errors_password.length == 0 ){
-        return res.status(400).json( { errors: [errors.array(), errors_password], password: 'Password is not strong enough' } );
+        return res.status(400).json( { errors: errors.array(), password: errors_password } );
     }
 
     //Checnking from the database that email isn't already in use.

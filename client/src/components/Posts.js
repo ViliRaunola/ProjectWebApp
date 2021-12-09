@@ -1,8 +1,5 @@
 function Posts() {
 
-    
-
-
     return (
         <div>
            

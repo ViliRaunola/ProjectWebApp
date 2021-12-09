@@ -2,8 +2,6 @@ import { useNavigate } from "react-router-dom";
 import {useState, useEffect} from 'react'
 import Typography from '@mui/material/Typography';
 import Input from '@mui/material/Input';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
 
 
 function Login() {
@@ -51,11 +49,11 @@ function Login() {
                     Please Login To Use All Of The Features
             </Typography>
 
-            <div id="form-div">
+            <div>
                 <form onSubmit={submitForm} onChange={whenChanging}>
                     <Input placeholder="email" type="email" id="email"></Input>
                     <Input placeholder="password" type="password" id="password"></Input>
-                    <Input disableUnderline="true" type="submit" id="submit"></Input>
+                    <Input disableUnderline={true} type="submit" id="submit"></Input>
                 </form>
             </div>
 

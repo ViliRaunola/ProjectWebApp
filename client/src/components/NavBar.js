@@ -9,12 +9,17 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import MenuItem from '@mui/material/MenuItem';
 import { Link as RouterLink} from 'react-router-dom';
+import { Button } from '@mui/material';
+import { useNavigate } from "react-router-dom";
 
 
 //SOURCE FOR APP BAR: https://mui.com/components/app-bar/#basic-app-bar
 
 
 const ResponsiveAppBar = () => {
+
+    let navigate = useNavigate();
+
 
     // These useStates and functions are used to handle the closing and opening of the drop down menus
 
@@ -26,6 +31,11 @@ const ResponsiveAppBar = () => {
 
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
+    };
+
+    const logOut = () => {
+        sessionStorage.setItem('token', '');
+        navigate(`/login`, { replace: true })
     };
 
 
@@ -104,6 +114,19 @@ const ResponsiveAppBar = () => {
                     style={{padding: '10px'}}>
                         Login
                 </MenuItem>
+                <MenuItem 
+                    component={RouterLink} 
+                    to='/register' 
+                    color="inherit" 
+                    style={{padding: '10px'}}>
+                        Register
+                </MenuItem>
+                <Button
+                    sx={{color:"red"}}
+                    onClick={logOut}
+                    >
+                    Logout
+                </Button>
                 </Menu>
             </Box>
             {/* Creating links to pages. Are shown in the desktop mode due to md beign flex and xs none meaning on extra small screens this is hidden*/}
@@ -136,6 +159,19 @@ const ResponsiveAppBar = () => {
                     style={{padding: '10px'}}>
                         Login
                 </MenuItem>
+                <MenuItem 
+                    component={RouterLink} 
+                    to='/register' 
+                    color="inherit" 
+                    style={{padding: '10px'}}>
+                        Register
+                </MenuItem>
+                <Button
+                    sx={{color:"red"}}
+                    onClick={logOut}
+                    >
+                    Logout
+                </Button>
             </Box>
             </Toolbar>
         </Container>
