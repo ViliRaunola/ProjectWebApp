@@ -63,7 +63,7 @@ router.post('/comment/add',
                 (err, createdComment) => {
                     if(err) throw err;
                     //Adding the comment id to user document that created it
-                    User.findOneAndUpdate({'_id': req.body.creator},
+                    User.findOneAndUpdate({'_id': req.user._id},
                     { $push: {'comments': createdComment._id}}, 
                     {timestamps:false}, //Making sure that the time stamp is not updated in this case, since I want it to update only when user information is changed
                     (err, user) => {
@@ -96,7 +96,7 @@ router.post(
         (err, createdPost) => {
             if(err) throw err;
             //Adding the post Id to the user document.
-            User.findOneAndUpdate({'_id': req.body.creator},
+            User.findOneAndUpdate({'_id': req.user._id},
                                 { $push: {'posts': createdPost._id}}, 
                                 {timestamps:false}, //Making sure that the time stamp is not updated in this case, since I want it to update only when user information is changed
                                 (err, user) => {

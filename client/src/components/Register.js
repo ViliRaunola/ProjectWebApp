@@ -2,6 +2,7 @@ import Typography from '@mui/material/Typography';
 import Input from '@mui/material/Input';
 import {useState} from 'react'
 import { useNavigate } from "react-router-dom";
+import { Button } from '@mui/material';
 
 const Register = () => {
 
@@ -66,7 +67,7 @@ const Register = () => {
                 </Typography>
                 
                 <br/>
-                <Input disableUnderline={true} type="submit" id="submit"></Input>
+                <Button variant='contained' type="submit" id="submit">Register</Button>
             </form>
         </div>
         

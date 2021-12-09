@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import {useState, useEffect} from 'react'
 import Typography from '@mui/material/Typography';
 import Input from '@mui/material/Input';
+import { Button } from "@mui/material";
 
 
 function Login() {
@@ -53,7 +54,7 @@ function Login() {
                 <form onSubmit={submitForm} onChange={whenChanging}>
                     <Input placeholder="email" type="email" id="email"></Input>
                     <Input placeholder="password" type="password" id="password"></Input>
-                    <Input disableUnderline={true} type="submit" id="submit"></Input>
+                    <Button  type="submit" id="submit">Login</Button>
                 </form>
             </div>
 
