@@ -4,6 +4,7 @@ import { Container, Link, TextField, Typography, Box, Button } from '@mui/materi
 import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import DelButton from './DelButton';
+import Voting from './Voting';
 
 const Post = () => {
 
@@ -17,7 +18,7 @@ const Post = () => {
     var jwt = sessionStorage.getItem('token');
     var decodedJwt = '0'
 
-    //If there was jwt, it is decoded
+    //If there was jwt, it is decoded. Would cause an error if there was no token and it was tried to be decoded
     if(jwt){
         decodedJwt = jwt_decode(jwt);  //Source for decoding jwt: https://www.npmjs.com/package/jwt-decode
     }
@@ -89,9 +90,6 @@ const Post = () => {
         
     }
 
-
-    
-
     return (
         <div>
             <Container sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}} >
@@ -104,7 +102,10 @@ const Post = () => {
                 {/* Making sure that server returned comments. If it didn't this won't be run */}
                 {comments && comments.map((comment) => (
                     <Box key={comment._id || 0} display='flex' flexDirection="column" sx={{width: '50%',border: 1, borderColor: 'grey.500' , mt: 4, p: 2} }>
-                        <TextField disabled id='comment' multiline value={comment.content || ''} ></TextField>
+                        <Box display='flex' flexDirection="row">
+                            <TextField sx={{flexGrow: 1}} disabled id='comment' multiline value={comment.content || ''} ></TextField>
+                            <Voting comment={comment}/>
+                        </Box>
                         {renderDelButton(comment)}
                         <Link >By: {comment.creatorUsername}</Link>
                     </Box>

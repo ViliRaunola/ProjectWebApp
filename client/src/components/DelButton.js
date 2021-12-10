@@ -1,10 +1,9 @@
 import Button from '@mui/material/Button'
+import DeleteIcon from '@mui/icons-material/Delete'; //Source: https://mui.com/components/material-icons/
 
 const DelButton = ({ contentObj, onDelete}) => {
     return (
-        <div>
-            <Button key={contentObj._id} onClick={() => onDelete(contentObj)} sx={{ mt: 1, maxWidth: '25px', ml: '75%'}}  size='small' color='warning' variant="contained">Delete</Button>
-        </div>
+        <Button startIcon={<DeleteIcon/>} key={contentObj._id} onClick={() => onDelete(contentObj)} sx={{ px: 5.5, mt: 1, maxWidth: '60px', ml: 'auto'}}  size='small' color='warning' variant="contained">Delete</Button>
     )
 }
 
