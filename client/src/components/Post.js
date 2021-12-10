@@ -71,11 +71,12 @@ const Post = () => {
     //Calls the api to inform that a certain comment is beign removed. 
     //Server removes the comment and its connection in the database.
     //When done the page is refreshed
-    const removeComment = (commentId) => {
-        fetch(`/api/comment/delete/${commentId}`,{
+    const removeComment = (comment) => {
+        console.log(comment._id)
+        fetch(`/api/comment/delete/${comment._id}`,{
             method: 'POST',
             headers: {'Content-type': 'application/json', 'Authorization': `Bearer ${jwt}`},
-            body: JSON.stringify({userId: decodedJwt.id, postId: postId}),
+            body: JSON.stringify({userId: comment.userId, postId: postId}),
             mode: 'cors'
         }).then(res => res.json())
             .then(data => {
