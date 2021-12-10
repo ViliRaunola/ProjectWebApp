@@ -21,6 +21,8 @@ function Login() {
     const submitForm = (event) => {
         event.preventDefault()
 
+        sessionStorage.removeItem('token') //Removing the current token before a new one is received
+
         fetch('/api/user/login', {
             method: 'POST',
             headers: {'Content-type': 'application/json'},

@@ -133,7 +133,7 @@ const Post = () => {
                 <Box display='flex' flexDirection="column" sx={{width: '75%', justifyContent: 'center',border: 1, mt: 4, pb: 2, px: 2} }>
                     <Typography  variant='h6' color='textPrimary' component='h2' padding={2}> {post.title}</Typography>
                     <TextField disabled id='content' multiline value={post.content || ''} ></TextField><br/>
-                    <Link >By: {post.creatorUsername}</Link>
+                    <Link href={`/publicprofile/${post.creator}`}>By: {post.creatorUsername}</Link>
                 </Box>
 
                 {/* Making sure that server returned comments. If it didn't this won't be run */}
@@ -144,7 +144,7 @@ const Post = () => {
                             <Voting comment={comment} user={user}/>
                         </Box>
                         {renderDelButton(comment)}
-                        <Link >By: {comment.creatorUsername}</Link>
+                        <Link href={`/publicprofile/${comment.userId}`}>By: {comment.creatorUsername}</Link>
                     </Box>
                 ))}
 

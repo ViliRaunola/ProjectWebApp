@@ -36,7 +36,7 @@ const Voting = ({comment, user}) => {
             headers: {'Content-type': 'application/json', 'Authorization': `Bearer ${jwt}`},
             body: JSON.stringify({commentId: comment._id, downVote: true, upVote: false, userId: user.id}),
             mode: 'cors'
-        }).then(res => res.json())
+        }).then(res => res.json()) //TODO: Maybe check the error when non logged in user tries to vote?
             .then(data => {
                 if(data.success){ //Waiting for the server to response. 
                     window.location.reload(false);

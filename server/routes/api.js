@@ -20,6 +20,19 @@ schema
 
 
 
+//Route for getting user information. Not protected
+router.get('/user/public/:id', (req, res, next) => {
+    User.findOne({_id: req.params.id}, (err, user) => {
+        if(err) throw err
+        return res.json({user: {id: user._id, 
+            name: user.name,
+            email: user.email,
+            username: user.username,
+            created: user.createdAt,
+            }})
+    })
+})
+
 //Route for voting comments
 router.post('/vote', passport.authenticate('jwt', {session: false}), (req, res, next) => {
     //If the vote was up vote we add the post id to the user's upVotes list.
@@ -75,7 +88,7 @@ router.post('/comment/delete/:id', passport.authenticate('jwt', {session: false}
         if(err) throw err}) //Removes the comment from collection
     Post.updateOne({_id: req.body.postId}, {$pull : {comments: req.params.id}} , (err) => {
         if(err) throw err}) //Removes the comment id from post collection
-    User.updateOne({_id: req.body.userId}, {$pull : {comments: req.params.id}}, (err) => {
+    User.updateOne({_id: req.body.userId}, {$pull : {comments: req.params.id, upVotes: req.params.id, downVotes: req.params.id}}, (err) => {
         if(err) throw err;
         return res.json({success: true})
     })//Goes through the user object removing the comment from the related user) 
