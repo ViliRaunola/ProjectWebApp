@@ -3,6 +3,7 @@ import {useEffect, useState} from 'react'
 import { Container, Link, TextField, Typography, Box, Button } from '@mui/material'
 import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
+import DelButton from './DelButton';
 
 const Post = () => {
 
@@ -58,15 +59,36 @@ const Post = () => {
         })
     }, [])
 
-    //Here we check that the comment is from the user so the deletion button can be shown
-    const renderDelButton = (creatorId) => {
-        if(decodedJwt.id === creatorId){
+    //Check that the comment is from the user so the deletion button can be shown
+    const renderDelButton = (comment) => {
+        if(decodedJwt.id === comment.userId){
             return(
-                <Button sx={{ mt: 1, maxWidth: '25px', ml: 'auto'}}  size='small' color='warning' type="submit" variant="contained" id="delete">Delete</Button>
+                <DelButton contentObj={comment} onDelete={removeComment} />
             )
         }
-
     }
+
+    //Calls the api to inform that a certain comment is beign removed. 
+    //Server removes the comment and its connection in the database.
+    //When done the page is refreshed
+    const removeComment = (commentId) => {
+        fetch(`/api/comment/delete/${commentId}`,{
+            method: 'POST',
+            headers: {'Content-type': 'application/json', 'Authorization': `Bearer ${jwt}`},
+            body: JSON.stringify({userId: decodedJwt.id, postId: postId}),
+            mode: 'cors'
+        }).then(res => res.json())
+            .then(data => {
+                
+                if(data.success){ //Waiting for the server to response. If the deletion went through the page is refreshed so the new comment can be seen.
+                    // navigate(`/post/${postId}`, { replace: true })
+                    window.location.reload(false); //*For some reason the navigation doesn't work... Had to use window.location
+                }
+        })
+        
+    }
+
+
     
 
     return (
@@ -82,7 +104,7 @@ const Post = () => {
                 {comments && comments.map((comment) => (
                     <Box key={comment._id || 0} display='flex' flexDirection="column" sx={{width: '50%',border: 1, borderColor: 'grey.500' , mt: 4, p: 2} }>
                         <TextField disabled id='comment' multiline value={comment.content || ''} ></TextField>
-                        {renderDelButton(comment.userId)}
+                        {renderDelButton(comment)}
                         <Link >By: {comment.creatorUsername}</Link>
                     </Box>
                 ))}
