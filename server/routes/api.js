@@ -18,6 +18,18 @@ schema
     .has().digits()
     .has().symbols()
 
+//Route for deleting comments. Source for $pull https://docs.mongodb.com/manual/reference/operator/update/pull/
+router.post('/comment/delete/:id', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+    Comment.findOneAndRemove({_id: req.params.id}, (err) => {if(err) throw err}, (err) => {
+        if(err) throw err}) //Removes the comment from collection
+    Post.updateOne({_id: req.body.postId}, {$pull : {comments: req.params.id}} , (err) => {
+        if(err) throw err}) //Removes the comment id from post collection
+    User.updateOne({_id: req.body.userId}, {$pull : {comments: req.params.id}}, (err) => {
+        if(err) throw err;
+        return res.json({success: true})
+    })//Goes through the user object removing the comment from the related user) 
+})
+
 
 //Route for getting user information.
 //If the JWT is valid the passport.authenticate will return the user from database.

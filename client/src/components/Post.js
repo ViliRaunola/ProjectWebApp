@@ -2,6 +2,7 @@ import {useParams} from 'react-router-dom'
 import {useEffect, useState} from 'react'
 import { Container, Link, TextField, Typography, Box, Button } from '@mui/material'
 import { useNavigate } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 
 const Post = () => {
 
@@ -13,6 +14,14 @@ const Post = () => {
     const [newComment, setNewComment] = useState({})
 
     var jwt = sessionStorage.getItem('token');
+    var decodedJwt = '0'
+
+    //If there was jwt, it is decoded
+    if(jwt){
+        decodedJwt = jwt_decode(jwt);  //Source for decoding jwt: https://www.npmjs.com/package/jwt-decode
+    }
+    
+    
     
     //Keeps track of the input fields and creates the user object as the fields are beign filled.
     const whenChanging = (event) => {
@@ -48,11 +57,21 @@ const Post = () => {
             setComments(data.comments)
         })
     }, [])
+
+    //Here we check that the comment is from the user so the deletion button can be shown
+    const renderDelButton = (creatorId) => {
+        if(decodedJwt.id === creatorId){
+            return(
+                <Button sx={{ mt: 1, maxWidth: '25px', ml: 'auto'}}  size='small' color='warning' type="submit" variant="contained" id="delete">Delete</Button>
+            )
+        }
+
+    }
     
 
     return (
         <div>
-            <Container sx={{display:'flex', justifyContent:'center', flexDirection: 'column', alignItems: 'center'}} >
+            <Container sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}} >
                 <Box display='flex' flexDirection="column" sx={{width: '75%', justifyContent: 'center',border: 1, mt: 4, pb: 2, px: 2} }>
                     <Typography  variant='h6' color='textPrimary' component='h2' padding={2}> {post.title}</Typography>
                     <TextField disabled id='content' multiline value={post.content || ''} ></TextField><br/>
@@ -61,15 +80,16 @@ const Post = () => {
 
                 {/* Making sure that server returned comments. If it didn't this won't be run */}
                 {comments && comments.map((comment) => (
-                    <Box key={comment._id || 0} display='flex' flexDirection="column" sx={{width: '50%', justifyContent: 'center',border: 1, borderColor: 'grey.500' , mt: 4, p: 2} }>
-                        <TextField disabled id='comment' multiline value={comment.content || ''} ></TextField><br/>
+                    <Box key={comment._id || 0} display='flex' flexDirection="column" sx={{width: '50%',border: 1, borderColor: 'grey.500' , mt: 4, p: 2} }>
+                        <TextField disabled id='comment' multiline value={comment.content || ''} ></TextField>
+                        {renderDelButton(comment.userId)}
                         <Link >By: {comment.creatorUsername}</Link>
                     </Box>
                 ))}
 
                 {/* Making sure that the user is logged in. Otherwise this add comment form isn't showed */}
                 {jwt && <form onSubmit={submitComment} onChange={whenChanging}>
-                    <TextField multiline sx={{m: 1}} variant="outlined" placeholder="Add Comment" type="text" id="content"></TextField>
+                    <TextField required multiline sx={{m: 1}} variant="outlined" placeholder="Add Comment" type="text" id="content"></TextField>
                     <Button sx={{mt: 3}} type="submit" variant="contained" id="submit">Send</Button>
                 </form>}
             
