@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import {useState, useEffect} from 'react'
+import {useState} from 'react'
 import Typography from '@mui/material/Typography';
 import Input from '@mui/material/Input';
 import { Button } from "@mui/material";

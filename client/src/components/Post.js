@@ -14,6 +14,8 @@ const Post = () => {
     const [post, setPost] = useState({})
     const [comments, setComments] = useState([{}])
     const [newComment, setNewComment] = useState({})
+    const [user, setUser] = useState({})
+    const [loading, setLoading] = useState(true)
 
     var jwt = sessionStorage.getItem('token');
     var decodedJwt = '0'
@@ -22,8 +24,6 @@ const Post = () => {
     if(jwt){
         decodedJwt = jwt_decode(jwt);  //Source for decoding jwt: https://www.npmjs.com/package/jwt-decode
     }
-    
-    
     
     //Keeps track of the input fields and creates the user object as the fields are beign filled.
     const whenChanging = (event) => {
@@ -52,12 +52,23 @@ const Post = () => {
         .then(res => res.json())
         .then(data => {
             setPost(data.post)
-        })
-        fetch(`/api/comment/${postId}`)
+        }).then(() => fetch(`/api/comment/${postId}`)
         .then(res => res.json())
         .then(data => {
             setComments(data.comments)
-        })
+        }))
+        .then(() => { 
+            if(jwt){ //Check if the user is logged in. If not then the request to the server is not made
+            fetch('/api/user/profile', {
+              headers: {'Authorization': `Bearer ${jwt}`}
+            }).then(res => res.json())
+              .then(data => {
+                setUser({})
+                setUser(data.user)
+                
+              })
+          }setLoading(false)})
+       
     }, [])
 
     //Check that the comment is from the user so the deletion button can be shown
@@ -90,7 +101,33 @@ const Post = () => {
         
     }
 
-    return (
+    // const votingEnable = () => {
+    //     if(user.upVotes.length === 0){
+    //         setDisableUpVote(false);
+    //     }else{
+    //         for(var i = 0; i < user.upVotes.length; i++){
+    //             if(user.upVotes[i] === comment._id){
+    //                 setDisableUpVote(true);
+    //             }else{
+    //                 setDisableUpVote(false);
+    //             }
+    //         }
+    //     }
+    //     if(user.downVotes.length === 0){
+    //         setDisableDownVote(false);
+    //     }else{
+    //         for(var i = 0; i < user.downVotes.length; i++){
+    //             if(user.downVotes[i] === comment._id){
+    //                 setDisableDownVote(true);
+    //             }else{
+    //                 setDisableDownVote(false);
+    //             }
+    //         }
+    //     }
+    // }
+
+    //Source for checking wether the fetches are complete: https://www.youtube.com/watch?v=k2Zk5cbiZhg&t=552s&ab_channel=TraversyMedia
+    return loading ? (<p>Loading</p>) : (
         <div>
             <Container sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}} >
                 <Box display='flex' flexDirection="column" sx={{width: '75%', justifyContent: 'center',border: 1, mt: 4, pb: 2, px: 2} }>
@@ -104,7 +141,7 @@ const Post = () => {
                     <Box key={comment._id || 0} display='flex' flexDirection="column" sx={{width: '50%',border: 1, borderColor: 'grey.500' , mt: 4, p: 2} }>
                         <Box display='flex' flexDirection="row">
                             <TextField sx={{flexGrow: 1}} disabled id='comment' multiline value={comment.content || ''} ></TextField>
-                            <Voting comment={comment}/>
+                            <Voting comment={comment} user={user}/>
                         </Box>
                         {renderDelButton(comment)}
                         <Link >By: {comment.creatorUsername}</Link>

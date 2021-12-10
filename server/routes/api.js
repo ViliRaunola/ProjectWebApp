@@ -18,6 +18,57 @@ schema
     .has().digits()
     .has().symbols()
 
+
+
+//Route for voting comments
+router.post('/vote', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+    //If the vote was up vote we add the post id to the user's upVotes list.
+    //Since each user has only one vote we delete possible duplicates first.
+    if(req.body.upVote){
+        User.updateOne({_id: req.body.userId}, {$pull: {upVotes: req.body.commentId}}, (err) => { //Clears the user's upVotes list from this vote incase of duplicate
+            if(err) throw err
+            User.updateOne({_id: req.body.userId}, {$push: {upVotes: req.body.commentId}}, (err) => { //Adds the post id to User's upVotes list
+                if(err) throw err;
+                User.updateOne({_id: req.body.userId}, {$pull: {downVotes: req.body.commentId}}, (err) => { //Clears the user's downVotes list from this vote incase of duplicate
+                    if(err) throw err;
+                    Comment.updateOne({_id: req.body.commentId}, {$pull: {upVotes: req.body.userId}}, (err) => { //Clears the comments upVotes list from this vote incase of duplicate
+                        if(err) throw err;
+                        Comment.updateOne({_id: req.body.commentId}, {$push: {upVotes: req.body.userId}}, (err) => { //Adds the user id to Comment's upVote list
+                            if(err) throw err;
+                            Comment.updateOne({_id: req.body.commentId}, {$pull: {downVotes: req.body.userId}}, (err) => { //Clears the Comment's downVotes list from this vote incase of duplicate
+                                if(err) throw err;
+                                return res.json({success: true})
+                            })
+                        })
+                    })
+                })
+            })
+        })
+    //Here the same is the same logic but for down vote
+    }else if(req.body.downVote){
+        User.updateOne({_id: req.body.userId}, {$pull: {downVotes: req.body.commentId}}, (err) => { //Clears the user's downVotes list from this vote incase of duplicate
+            if(err) throw err
+            User.updateOne({_id: req.body.userId}, {$push: {downVotes: req.body.commentId}}, (err) => { //Adds the post id to User's downVotes list
+                if(err) throw err;
+                User.updateOne({_id: req.body.userId}, {$pull: {upVotes: req.body.commentId}}, (err) => { //Clears the user's upVotes list from this vote incase of duplicate
+                    if(err) throw err;
+                    Comment.updateOne({_id: req.body.commentId}, {$pull: {downVotes: req.body.userId}}, (err) => { //Clears the comments downVotes list from this vote incase of duplicate
+                        if(err) throw err;
+                        Comment.updateOne({_id: req.body.commentId}, {$push: {downVotes: req.body.userId}}, (err) => { //Adds the user id to Comment's downVote list
+                            if(err) throw err;
+                            Comment.updateOne({_id: req.body.commentId}, {$pull: {upVotes: req.body.userId}}, (err) => { //Clears the Comment's upVotes list from this vote incase of duplicate
+                                if(err) throw err;
+                                return res.json({success: true})
+                            })
+                        })
+                    })
+                })
+            })
+        })
+    }
+})
+
+
 //Route for deleting comments. Source for $pull https://docs.mongodb.com/manual/reference/operator/update/pull/
 router.post('/comment/delete/:id', passport.authenticate('jwt', {session: false}), (req, res, next) => {
     Comment.findOneAndRemove({_id: req.params.id}, (err) => {if(err) throw err}, (err) => {
@@ -30,7 +81,6 @@ router.post('/comment/delete/:id', passport.authenticate('jwt', {session: false}
     })//Goes through the user object removing the comment from the related user) 
 })
 
-
 //Route for getting user information.
 //If the JWT is valid the passport.authenticate will return the user from database.
 //I will not send the full user object to the front end since it will contain the hashed password.
@@ -42,7 +92,9 @@ router.get('/user/profile',
                                         email: req.user.email,
                                         username: req.user.username,
                                         created: req.user.createdAt,
-                                        updated: req.user.updatedAt}})
+                                        updated: req.user.updatedAt,
+                                        upVotes: req.user.upVotes,
+                                        downVotes: req.user.downVotes}})
             });
 
 //Gets all of the comments related to the post which id was given in the parameters.
