@@ -22,7 +22,15 @@ schema
 
 //Route for modifying a post
 router.post('/post/modify', passport.authenticate('jwt', {session: false}), (req, res, next) => {
-    Post.findOneAndUpdate({_id: req.body.postId}, {title: req.body.title, content: req.body.content}, (err) => {
+    Post.findOneAndUpdate({_id: req.body.postId}, {content: req.body.content}, (err) => {
+        if(err) return err;
+        return res.json({success: true})
+    })
+})
+
+//Route for modifying a comment
+router.post('/comment/modify', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+    Comment.findOneAndUpdate({_id: req.body.commentId}, {content: req.body.content}, (err) => {
         if(err) return err;
         return res.json({success: true})
     })

@@ -6,6 +6,7 @@ import jwt_decode from "jwt-decode";
 import DelButton from './DelButton';
 import Voting from './Voting';
 import EditButton from './EditButton'
+import SubmitButton from './SubmitButton'
 
 const Post = () => {
 
@@ -17,6 +18,10 @@ const Post = () => {
     const [newComment, setNewComment] = useState({})
     const [user, setUser] = useState({})
     const [loading, setLoading] = useState(true)
+    const [editPost, setEditPost] = useState(true)
+    const [editComment, setEditComment] = useState(true)
+    const [commentIdBeignEdited, setCommentIdBeignEdited] = useState('') //Keeps track of the comment that is beign edited
+    const [updatedComment, setUpdatedComment] = useState({})
 
     var jwt = sessionStorage.getItem('token');
     var decodedJwt = '0'
@@ -30,6 +35,25 @@ const Post = () => {
     const whenChanging = (event) => {
         setNewComment({...newComment, [event.target.id]: event.target.value})
     }  
+
+    const postOnChange = (event) => {
+        setPost({...post, [event.target.id]: event.target.value})
+    }
+
+    //Source for updating a object inside an array: https://www.robinwieruch.de/react-update-item-in-list/
+    const commentOnChange = (event, id) => { //Get the event and the id of the comment that is beign changed
+        const newComments = comments.map((comment) => { //Create a new comments list from the old comments list
+            if(comment._id === id){ //If a comment is found that matches the comment that is beign edited it is changed
+                const updatedComment = {    //Creating a new comment that has the same values as the old one but change the content to that from the user's edit
+                    ...comment, content: event.target.value
+                }
+                setUpdatedComment(updatedComment) //Saving the updated comment so it can be then sent to server
+                return updatedComment; //Returning the updated comment back
+            }
+            return comment //Returning this modified comment back to the list that is beign created from the old ones
+        })
+        setComments(newComments) //Now the modified comments list is set as the current comments and the modifies can be seen/ done in the front end
+    }
 
     //When user submits a comment it is sent to backend where it is saved to database
     const submitComment = () => {
@@ -72,13 +96,36 @@ const Post = () => {
        
     }, [])
 
+    //Ran when clicked edit button.
+    //Toggles edit to post
+    const allowEditPost = () => {
+        if(editPost){
+            setEditPost(false)
+        }else{
+            setEditPost(true)
+        }
+        
+    }
+
+    //Ran when clicked edit button.
+    //Toggles edit to comment
+    const allowEditComment = (comment) => {
+        setCommentIdBeignEdited(comment._id)
+        if(editComment){
+            setEditComment(false)    //Allow edits
+        }else{
+            setEditComment(true)
+        }
+        
+    }
+
     //Check that the comment is from the user so the deletion button can be shown
     const renderButtonsComment = (comment) => {
         if(decodedJwt.id === comment.userId){
             return(
                 <Box  display='flex' flexDirection="row-reverse">
                     <DelButton contentObj={comment} onDelete={removeComment} />
-                    <EditButton/>
+                    <EditButton clickEvent={allowEditComment} object={comment}/>
                 </Box>
             )
         }
@@ -89,7 +136,7 @@ const Post = () => {
             return(
                 <Box  display='flex' flexDirection="row-reverse">
                     <DelButton contentObj={post} onDelete={deletePost}/>
-                    <EditButton/>
+                    <EditButton clickEvent={allowEditPost}/>
                 </Box>
                 
             )
@@ -131,6 +178,50 @@ const Post = () => {
         })
     }
 
+    const renderSubmitButtonPost = (post) => {
+        if(!editPost){
+            return (<SubmitButton whenClicked={sendUpdatedPost} object={post}/>)
+        }
+    }
+
+    const renderSubmitButtonComment = (comment) => {
+        if(!editComment && comment._id === commentIdBeignEdited){
+            return (<SubmitButton whenClicked={sendUpdatedComment} object={comment}/>)
+        }
+    }
+
+
+    const sendUpdatedComment = (comment) => {
+        console.log(updatedComment)
+        fetch('/api/comment/modify', {
+            method: 'POST',
+            headers: {'Content-type': 'application/json', 'Authorization': `Bearer ${jwt}`},
+            body: JSON.stringify({content: updatedComment.content, commentId: updatedComment._id}),
+            mode: 'cors'
+          }).then(res => res.json())
+            .then(data => {
+                if(data.success){ //Waiting for the server to response. If the post edit went through the page is refreshed so the post can be seen.
+                    setEditComment(true)
+                    navigate(`/post/${postId}`, { replace: true })
+                }
+            })
+    }
+
+    const sendUpdatedPost = (post) => {
+        fetch('/api/post/modify', {
+            method: 'POST',
+            headers: {'Content-type': 'application/json', 'Authorization': `Bearer ${jwt}`},
+            body: JSON.stringify({content: post.content, postId: postId}),
+            mode: 'cors'
+          }).then(res => res.json())
+            .then(data => {
+                if(data.success){ //Waiting for the server to response. If the post edit went through the page is refreshed so the post can be seen.
+                    setEditPost(true)
+                    navigate(`/post/${postId}`, { replace: true })
+                }
+            })
+    }
+
 
 
     //Source for checking wether the fetches are complete: https://www.youtube.com/watch?v=k2Zk5cbiZhg&t=552s&ab_channel=TraversyMedia
@@ -140,9 +231,10 @@ const Post = () => {
             <Container sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}} >
                 <Box display='flex' flexDirection="column" sx={{width: '75%', justifyContent: 'center',border: 1, mt: 4, pb: 2, px: 2} }>
                     <Typography  variant='h6' color='textPrimary' component='h2' padding={2}> {post.title}</Typography>
-                    <TextField disabled id='content' multiline value={post.content || ''} ></TextField>
+                    <TextField required disabled={editPost} id='content' multiline value={post.content || ''} onChange={postOnChange}></TextField>
                     {renderButtonsPost(post)}
-                    <Link href={`/publicprofile/${post.creator}`}>By: {post.creatorUsername}</Link>
+                    {renderSubmitButtonPost(post)}
+                    <Link sx={{width: '10%'}} href={`/publicprofile/${post.creator}`}>By: {post.creatorUsername}</Link>
                 </Box>
 
                 {/* The comment is shown here */}
@@ -150,11 +242,12 @@ const Post = () => {
                 {comments && comments.map((comment) => (
                     <Box key={comment._id || 0} display='flex' flexDirection="column" sx={{width: '50%',border: 1, borderColor: 'grey.500' , mt: 4, p: 2} }>
                         <Box display='flex' flexDirection="row">
-                            <TextField sx={{flexGrow: 1}} disabled id='comment' multiline value={comment.content || ''} ></TextField>
+                            <TextField sx={{flexGrow: 1}} disabled={editComment} id='content' multiline value={comment.content || ''} onChange={(event) => commentOnChange(event, comment._id)}></TextField>
                             <Voting comment={comment} user={user}/>
                         </Box>
                         {renderButtonsComment(comment)}
-                        <Link href={`/publicprofile/${comment.userId}`}>By: {comment.creatorUsername}</Link>
+                        {renderSubmitButtonComment(comment)}
+                        <Link sx={{width: '20%'}} href={`/publicprofile/${comment.userId}`}>By: {comment.creatorUsername}</Link>
                     </Box>
                 ))}
 
