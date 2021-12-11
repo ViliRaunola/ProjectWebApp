@@ -42,14 +42,15 @@ function Posts() {
     const indexFirstPost = indexLastPost - postsOnPage
     const postsToShow = posts.slice(indexFirstPost, indexLastPost); //From the original posts list we slice a piece that contains the posts at a specific page
 
+    //function to determine if the pager is used or not
     const showPagerFunction = () =>{
-        if(showPager){
+        if(showPager){ //Returning the posts using pager
             return (<Box>
                         <PostCard posts={postsToShow}/>
                         <Pagination count={totalPages} page={page} onChange={handleChange} />
                     </Box>)
         }else{
-            return(
+            return( //Only the posts
                 <Box>
                     <PostCard posts={posts}/>
                 </Box>
