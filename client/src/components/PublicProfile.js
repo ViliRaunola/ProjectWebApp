@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import {useEffect, useState} from 'react'
 import { TextField } from '@mui/material';
 import { Box } from '@mui/system';
-import { Typography } from '@mui/material';
+import { Typography, Container } from '@mui/material';
 import moment from 'moment'
 import { useParams } from 'react-router-dom';
 
@@ -19,8 +19,8 @@ function PublicProfile() {
     }, [])
 
     return (
-        <div>
-          <Box sx={{m: 2}}>
+      <Container sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}} >
+        <Box display='flex' flexDirection="column" sx={{m: 2, width: '50%'}} >
           <Typography
               variant='h6'
               color='textSecondary'
@@ -54,8 +54,7 @@ function PublicProfile() {
               value={moment(user.created).utc().format('DD/MM/YY') || ''} //Source for formatting mongoose time stamp in react: https://stackoverflow.com/questions/62342707/how-to-format-date-from-mongodb-using-react
             />
           </Box>
-          
-        </div>
+        </Container>
     )
 }
 

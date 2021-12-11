@@ -24,7 +24,7 @@ function Profile() {
 
     return (
       <Container sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}} >
-        <Box display='flex' flexDirection="column" sx={{m: 2, width: '100%'}} >
+        <Box display='flex' flexDirection="column" sx={{m: 2, width: '50%'}} >
         <Typography
             variant='h6'
             color='textSecondary'
