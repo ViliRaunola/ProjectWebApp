@@ -20,7 +20,7 @@ const Post = () => {
     const [loading, setLoading] = useState(true)
     const [editPost, setEditPost] = useState(true)
     const [editComment, setEditComment] = useState(true)
-    const [commentIdBeignEdited, setCommentIdBeignEdited] = useState('') //Keeps track of the comment that is beign edited
+    const [commentIdBeignEdited, setCommentIdBeignEdited] = useState('') //Keeps track of the comment that is beign edited. Other wise all comments could be edited at the same time
     const [updatedComment, setUpdatedComment] = useState({})
 
     var jwt = sessionStorage.getItem('token');
@@ -114,7 +114,8 @@ const Post = () => {
         if(editComment){
             setEditComment(false)    //Allow edits
         }else{
-            setEditComment(true)
+            setEditComment(true)    //Disable edits
+            setCommentIdBeignEdited('') //Resetting the value so no comments can be changed
         }
         
     }
@@ -192,7 +193,6 @@ const Post = () => {
 
 
     const sendUpdatedComment = (comment) => {
-        console.log(updatedComment)
         fetch('/api/comment/modify', {
             method: 'POST',
             headers: {'Content-type': 'application/json', 'Authorization': `Bearer ${jwt}`},
@@ -202,6 +202,7 @@ const Post = () => {
             .then(data => {
                 if(data.success){ //Waiting for the server to response. If the post edit went through the page is refreshed so the post can be seen.
                     setEditComment(true)
+                    setCommentIdBeignEdited('')
                     navigate(`/post/${postId}`, { replace: true })
                 }
             })
@@ -242,7 +243,7 @@ const Post = () => {
                 {comments && comments.map((comment) => (
                     <Box key={comment._id || 0} display='flex' flexDirection="column" sx={{width: '50%',border: 1, borderColor: 'grey.500' , mt: 4, p: 2} }>
                         <Box display='flex' flexDirection="row">
-                            <TextField sx={{flexGrow: 1}} disabled={editComment} id='content' multiline value={comment.content || ''} onChange={(event) => commentOnChange(event, comment._id)}></TextField>
+                            <TextField sx={{flexGrow: 1}} disabled={commentIdBeignEdited !== comment._id} id='content' multiline value={comment.content || ''} onChange={(event) => commentOnChange(event, comment._id)}></TextField>
                             <Voting comment={comment} user={user}/>
                         </Box>
                         {renderButtonsComment(comment)}
