@@ -24,6 +24,9 @@ const ResponsiveAppBar = () => {
     // These useStates and functions are used to handle the closing and opening of the drop down menus
 
     const [anchorElNav, setAnchorElNav] = React.useState(null);
+
+    //Based on this boolean some pages are hidden from the user. For example when user is not logged in there is no reason to show logout button.
+    var isLoggedIn = false;
     
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -37,6 +40,11 @@ const ResponsiveAppBar = () => {
         sessionStorage.setItem('token', '');
         navigate(`/login`, { replace: true })
     };
+
+    //Checking if the user is logged in. 
+    if(sessionStorage.getItem('token')){
+        isLoggedIn = true
+    }
 
 
     return (
@@ -100,45 +108,45 @@ const ResponsiveAppBar = () => {
                     style={{padding: '10px'}}>
                         Posts
                 </MenuItem>
-                <MenuItem 
+                {isLoggedIn && <MenuItem 
                     component={RouterLink} 
                     to='/createpost' 
                     color="inherit" 
                     style={{padding: '10px'}}>
                         Create a Post
-                </MenuItem>
-                <MenuItem 
+                </MenuItem>}
+                {isLoggedIn &&<MenuItem 
                     component={RouterLink} 
                     to='/profile' 
                     color="inherit" 
                     style={{padding: '10px'}}>
                         Profile
-                </MenuItem>
-                <MenuItem 
+                </MenuItem>}
+                {!isLoggedIn &&<MenuItem 
                     component={RouterLink} 
                     to='/login' 
                     color="inherit" 
                     style={{padding: '10px'}}>
                         Login
-                </MenuItem>
-                <MenuItem 
+                </MenuItem>}
+                {!isLoggedIn &&<MenuItem 
                     component={RouterLink} 
                     to='/register' 
                     color="inherit" 
                     style={{padding: '10px'}}>
                         Register
-                </MenuItem>
-                <Button
+                </MenuItem>}
+                {isLoggedIn && <Button
                     sx={{color:"red"}}
                     onClick={logOut}
                     >
                     Logout
-                </Button>
+                </Button>}
                 </Menu>
             </Box>
             {/* Creating links to pages. Are shown in the desktop mode due to md beign flex and xs none meaning on extra small screens this is hidden*/}
             <Box  sx={{ display: { xs: 'none', md: 'flex' } }}>
-                <MenuItem 
+            <MenuItem 
                     component={RouterLink} 
                     to='/' 
                     color="inherit" 
@@ -152,40 +160,40 @@ const ResponsiveAppBar = () => {
                     style={{padding: '10px'}}>
                         Posts
                 </MenuItem>
-                <MenuItem 
+                {isLoggedIn && <MenuItem 
                     component={RouterLink} 
                     to='/createpost' 
                     color="inherit" 
                     style={{padding: '10px'}}>
                         Create a Post
-                </MenuItem>
-                <MenuItem 
+                </MenuItem>}
+                {isLoggedIn &&<MenuItem 
                     component={RouterLink} 
                     to='/profile' 
                     color="inherit" 
                     style={{padding: '10px'}}>
                         Profile
-                </MenuItem>
-                <MenuItem 
+                </MenuItem>}
+                {!isLoggedIn &&<MenuItem 
                     component={RouterLink} 
                     to='/login' 
                     color="inherit" 
                     style={{padding: '10px'}}>
                         Login
-                </MenuItem>
-                <MenuItem 
+                </MenuItem>}
+                {!isLoggedIn &&<MenuItem 
                     component={RouterLink} 
                     to='/register' 
                     color="inherit" 
                     style={{padding: '10px'}}>
                         Register
-                </MenuItem>
-                <Button
+                </MenuItem>}
+                {isLoggedIn && <Button
                     sx={{color:"red"}}
                     onClick={logOut}
                     >
                     Logout
-                </Button>
+                </Button>}
             </Box>
             </Toolbar>
         </Container>
