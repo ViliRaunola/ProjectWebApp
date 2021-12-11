@@ -1,44 +1,61 @@
-import { Card, CardActionArea, CardContent, Container, Typography } from '@mui/material'
+import { Card, CardActionArea, CardContent, Container, Typography, Pagination } from '@mui/material'
+import { Box } from '@mui/system';
 import {useEffect, useState} from 'react'
 import { Suspense } from 'react';
+import PostCard from './PostCard';
 
 function Posts() {
 
-    const [posts, setPosts] = useState([{}])   
 
+    //Source for pagination: https://mui.com/components/pagination/   &   https://www.youtube.com/watch?v=IYCa1F-OWmk&ab_channel=TraversyMedia
+
+    const [posts, setPosts] = useState([{}])   //All of the posts that are fetched from the database
+    const [page, setPage] = useState(1);    //Keeps track of the current page that we are on
+    const postsOnPage = 5;  //Can choose how many posts you want to show per one page
+    const totalPages = Math.ceil(posts.length / postsOnPage) //Calculate all of the pages that are required
+    const [noPosts, setNoPosts] = useState(true)    //Keeps track wether a server has given any posts
+
+    const handleChange = (event, value) => { //When the page is changed we get the new page number we are on
+        setPage(value);
+    };
+
+    //Fetching all of the posts from the server
     useEffect(() => {
         fetch('api/post/all')
         .then(res => res.json())
         .then(data => {
-            setPosts(data.posts)
+            if(typeof data.posts === 'undefined'){ //If database reutrns empty array
+                setNoPosts(true)
+            }else{
+                setPosts(data.posts) //Saving the posts that were resieved
+                setNoPosts(false)
+            }
         })
     }, [])
+
+    //Get the posts that are to be shown at a spesific page
+    const indexLastPost = page * postsOnPage
+    const indexFirstPost = indexLastPost - postsOnPage
+    const postsToShow = posts.slice(indexFirstPost, indexLastPost); //From the original posts list we slice a piece that contains the posts at a specific page
 
 
     //It is checked if the session has received any posts from the server. If it has, then they can be displayed.
     return (
-        <div>
-            {!posts && <Typography>
-                No posts were found
-                </Typography>}
-
-            {/* Use of grid: https://mui.com/components/grid/ */}
-            {posts && <Container sx={{display:'flex', justifyContent:'center', flexDirection: 'column', alignItems: 'center'}}>
-                {posts.map((post) => ( //How to use cards in MUI: https://mui.com/components/cards/
-                    <Card key={post._id || 0} sx={{ maxWidth: 345, m: 2}}>  {/* The or is to get rid of a warning that says each element should have uniqe key */}
-                        <CardActionArea href={`/post/${post._id}`}> {/* When the card is pressed user is redirected to the card's own page */}
-                            <CardContent>
-                                <Typography variant='h5' gutterBottom>{post.title}</Typography>
-                                <Typography variant='body2'>{post.content} </Typography>
-                            </CardContent>
-                        </CardActionArea>
-                    </Card>
-                ))}
-            </Container>}
-            
-            
-           
-        </div>
+        <Container sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}}>
+            {/* Posts were found */}
+            {!noPosts && <Box>
+                            <PostCard posts={postsToShow}/>
+                            <Pagination count={totalPages} page={page} onChange={handleChange} />
+                        </Box>
+            }
+            {/* No posts were found */}
+            {noPosts && <Box>
+                            <Typography>No posts were found</Typography>
+                        </Box>}
+        </Container>
+        
+        
+        
     )
 }
 

@@ -47,8 +47,8 @@ const CreatePost = () => {
             
         <form onSubmit={submitPost} onChange={whenChanging}>
             <Box display='flex' flexDirection="column" sx={{display:'flex', flexDirection: 'column'}}>
-                <TextField multiline placeholder="Title" type="text" id="title"></TextField>
-                <TextField multiline placeholder="Your Post" type="text" id="content"></TextField>
+                <TextField required multiline placeholder="Title" type="text" id="title"></TextField>
+                <TextField required multiline placeholder="Your Post" type="text" id="content"></TextField>
                 <Button type="submit" id="submit">Send</Button>
             </Box>
         </form>

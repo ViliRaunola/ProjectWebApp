@@ -128,6 +128,7 @@ const Post = () => {
     //Source for checking wether the fetches are complete: https://www.youtube.com/watch?v=k2Zk5cbiZhg&t=552s&ab_channel=TraversyMedia
     return loading ? (<p>Loading</p>) : (
         <div>
+            {/* The Post is shown here */}
             <Container sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}} >
                 <Box display='flex' flexDirection="column" sx={{width: '75%', justifyContent: 'center',border: 1, mt: 4, pb: 2, px: 2} }>
                     <Typography  variant='h6' color='textPrimary' component='h2' padding={2}> {post.title}</Typography>
@@ -136,6 +137,7 @@ const Post = () => {
                     <Link href={`/publicprofile/${post.creator}`}>By: {post.creatorUsername}</Link>
                 </Box>
 
+                {/* The comment is shown here */}
                 {/* Making sure that server returned comments. If it didn't this won't be run */}
                 {comments && comments.map((comment) => (
                     <Box key={comment._id || 0} display='flex' flexDirection="column" sx={{width: '50%',border: 1, borderColor: 'grey.500' , mt: 4, p: 2} }>
