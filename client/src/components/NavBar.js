@@ -102,6 +102,13 @@ const ResponsiveAppBar = () => {
                 </MenuItem>
                 <MenuItem 
                     component={RouterLink} 
+                    to='/createpost' 
+                    color="inherit" 
+                    style={{padding: '10px'}}>
+                        Create a Post
+                </MenuItem>
+                <MenuItem 
+                    component={RouterLink} 
                     to='/profile' 
                     color="inherit" 
                     style={{padding: '10px'}}>
@@ -144,6 +151,13 @@ const ResponsiveAppBar = () => {
                     color="inherit" 
                     style={{padding: '10px'}}>
                         Posts
+                </MenuItem>
+                <MenuItem 
+                    component={RouterLink} 
+                    to='/createpost' 
+                    color="inherit" 
+                    style={{padding: '10px'}}>
+                        Create a Post
                 </MenuItem>
                 <MenuItem 
                     component={RouterLink} 

@@ -163,6 +163,7 @@ router.post(
     '/post/add', 
     passport.authenticate('jwt', {session: false}),
     (req, res, next) => {
+
         //Adding the post to database
         Post.create({
             content: req.body.content,

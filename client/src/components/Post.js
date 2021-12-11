@@ -101,30 +101,7 @@ const Post = () => {
         
     }
 
-    // const votingEnable = () => {
-    //     if(user.upVotes.length === 0){
-    //         setDisableUpVote(false);
-    //     }else{
-    //         for(var i = 0; i < user.upVotes.length; i++){
-    //             if(user.upVotes[i] === comment._id){
-    //                 setDisableUpVote(true);
-    //             }else{
-    //                 setDisableUpVote(false);
-    //             }
-    //         }
-    //     }
-    //     if(user.downVotes.length === 0){
-    //         setDisableDownVote(false);
-    //     }else{
-    //         for(var i = 0; i < user.downVotes.length; i++){
-    //             if(user.downVotes[i] === comment._id){
-    //                 setDisableDownVote(true);
-    //             }else{
-    //                 setDisableDownVote(false);
-    //             }
-    //         }
-    //     }
-    // }
+
 
     //Source for checking wether the fetches are complete: https://www.youtube.com/watch?v=k2Zk5cbiZhg&t=552s&ab_channel=TraversyMedia
     return loading ? (<p>Loading</p>) : (

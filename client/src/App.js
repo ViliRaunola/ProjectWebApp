@@ -5,6 +5,7 @@ import Profile from './components/Profile'
 import Login from './components/Login'
 import Register from './components/Register'
 import Post from './components/Post'
+import CreatePost from './components/CreatePost';
 import PublicProfile from './components/PublicProfile'
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 
@@ -24,6 +25,7 @@ function App() {
         <Route path='/publicprofile/:id' element={<> <ResponsiveAppBar/> <PublicProfile/> </>}></Route>
         <Route path='/login' element={<> <ResponsiveAppBar/> <Login/> </>}></Route>
         <Route path='/register' element={<> <ResponsiveAppBar/> <Register/> </>}></Route>
+        <Route path='/createpost' element={<> <ResponsiveAppBar/> <CreatePost/> </>}></Route>
       </Routes>
 
 
