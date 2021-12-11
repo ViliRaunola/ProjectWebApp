@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import DelButton from './DelButton';
 import Voting from './Voting';
+import EditButton from './EditButton'
 
 const Post = () => {
 
@@ -72,18 +73,25 @@ const Post = () => {
     }, [])
 
     //Check that the comment is from the user so the deletion button can be shown
-    const renderDelButton = (comment) => {
+    const renderButtonsComment = (comment) => {
         if(decodedJwt.id === comment.userId){
             return(
-                <DelButton contentObj={comment} onDelete={removeComment} />
+                <Box  display='flex' flexDirection="row-reverse">
+                    <DelButton contentObj={comment} onDelete={removeComment} />
+                    <EditButton/>
+                </Box>
             )
         }
     }
 
-    const renderDelButtonPost = (post) => {
+    const renderButtonsPost = (post) => {
         if(decodedJwt.id === post.creator){
             return(
-                <DelButton contentObj={post} onDelete={deletePost}/>
+                <Box  display='flex' flexDirection="row-reverse">
+                    <DelButton contentObj={post} onDelete={deletePost}/>
+                    <EditButton/>
+                </Box>
+                
             )
         }
     }
@@ -133,7 +141,7 @@ const Post = () => {
                 <Box display='flex' flexDirection="column" sx={{width: '75%', justifyContent: 'center',border: 1, mt: 4, pb: 2, px: 2} }>
                     <Typography  variant='h6' color='textPrimary' component='h2' padding={2}> {post.title}</Typography>
                     <TextField disabled id='content' multiline value={post.content || ''} ></TextField>
-                    {renderDelButtonPost(post)}
+                    {renderButtonsPost(post)}
                     <Link href={`/publicprofile/${post.creator}`}>By: {post.creatorUsername}</Link>
                 </Box>
 
@@ -145,7 +153,7 @@ const Post = () => {
                             <TextField sx={{flexGrow: 1}} disabled id='comment' multiline value={comment.content || ''} ></TextField>
                             <Voting comment={comment} user={user}/>
                         </Box>
-                        {renderDelButton(comment)}
+                        {renderButtonsComment(comment)}
                         <Link href={`/publicprofile/${comment.userId}`}>By: {comment.creatorUsername}</Link>
                     </Box>
                 ))}

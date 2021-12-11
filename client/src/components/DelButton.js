@@ -3,7 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete'; //Source: https://mui.com/c
 
 const DelButton = ({ contentObj, onDelete}) => {
     return (
-        <Button startIcon={<DeleteIcon/>} key={contentObj._id} onClick={() => onDelete(contentObj)} sx={{ px: 5.5, mt: 1, maxWidth: '60px', ml: 'auto'}}  size='small' color='warning' variant="contained">Delete</Button>
+        <Button startIcon={<DeleteIcon/>} key={contentObj._id} onClick={() => onDelete(contentObj)} sx={{ px: 5.5, mt: 1, maxWidth: '60px'}}  size='small' color='warning' variant="contained">Delete</Button>
     )
 }
 

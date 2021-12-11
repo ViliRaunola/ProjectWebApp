@@ -20,6 +20,16 @@ schema
 
 
 
+//Route for modifying a post
+router.post('/post/modify', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+    Post.findOneAndUpdate({_id: req.body.postId}, {title: req.body.title, content: req.body.content}, (err) => {
+        if(err) return err;
+        return res.json({success: true})
+    })
+})
+
+
+
 //Route for getting user information. Not protected
 router.get('/user/public/:id', (req, res, next) => {
     User.findOne({_id: req.params.id}, (err, user) => {
