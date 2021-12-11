@@ -14,6 +14,7 @@ function Posts() {
     const postsOnPage = 5;  //Can choose how many posts you want to show per one page
     const totalPages = Math.ceil(posts.length / postsOnPage) //Calculate all of the pages that are required
     const [noPosts, setNoPosts] = useState(true)    //Keeps track wether a server has given any posts
+    const [showPager, setShowPager] = useState(false) //Value that determines wether the pager is used or not
 
     const handleChange = (event, value) => { //When the page is changed we get the new page number we are on
         setPage(value);
@@ -29,6 +30,9 @@ function Posts() {
             }else{
                 setPosts(data.posts) //Saving the posts that were resieved
                 setNoPosts(false)
+                if(data.posts.length > 10){ //When there are more than 10 posts received from server pager is used
+                    setShowPager(true)
+                }
             }
         })
     }, [])
@@ -38,16 +42,28 @@ function Posts() {
     const indexFirstPost = indexLastPost - postsOnPage
     const postsToShow = posts.slice(indexFirstPost, indexLastPost); //From the original posts list we slice a piece that contains the posts at a specific page
 
+    const showPagerFunction = () =>{
+        if(showPager){
+            return (<Box>
+                        <PostCard posts={postsToShow}/>
+                        <Pagination count={totalPages} page={page} onChange={handleChange} />
+                    </Box>)
+        }else{
+            return(
+                <Box>
+                    <PostCard posts={posts}/>
+                </Box>
+            ) 
+        }
+    }
 
     //It is checked if the session has received any posts from the server. If it has, then they can be displayed.
     return (
         <Container sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}}>
+            
             {/* Posts were found */}
-            {!noPosts && <Box>
-                            <PostCard posts={postsToShow}/>
-                            <Pagination count={totalPages} page={page} onChange={handleChange} />
-                        </Box>
-            }
+            {!noPosts && showPagerFunction()}
+
             {/* No posts were found */}
             {noPosts && <Box>
                             <Typography>No posts were found</Typography>
