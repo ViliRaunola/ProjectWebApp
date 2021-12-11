@@ -80,11 +80,19 @@ const Post = () => {
         }
     }
 
+    const renderDelButtonPost = (post) => {
+        if(decodedJwt.id === post.creator){
+            return(
+                <DelButton contentObj={post} onDelete={deletePost}/>
+            )
+        }
+    }
+
+
     //Calls the api to inform that a certain comment is beign removed. 
     //Server removes the comment and its connection in the database.
     //When done the page is refreshed
     const removeComment = (comment) => {
-        console.log(comment._id)
         fetch(`/api/comment/delete/${comment._id}`,{
             method: 'POST',
             headers: {'Content-type': 'application/json', 'Authorization': `Bearer ${jwt}`},
@@ -101,6 +109,20 @@ const Post = () => {
         
     }
 
+    const deletePost = (post) => {
+        fetch(`/api/post/delete/${post._id}`,{
+            method: 'POST',
+            headers: {'Content-type': 'application/json', 'Authorization': `Bearer ${jwt}`},
+            body: JSON.stringify({userId: post.creator, comments: comments}),
+            mode: 'cors'
+        }).then(res => res.json())
+            .then(data => {
+                if(data.success){ //Waiting for the server to response. If the deletion went through the page is refreshed so the new comment can be seen.
+                    navigate('/posts', { replace: true })
+                }
+        })
+    }
+
 
 
     //Source for checking wether the fetches are complete: https://www.youtube.com/watch?v=k2Zk5cbiZhg&t=552s&ab_channel=TraversyMedia
@@ -109,7 +131,8 @@ const Post = () => {
             <Container sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}} >
                 <Box display='flex' flexDirection="column" sx={{width: '75%', justifyContent: 'center',border: 1, mt: 4, pb: 2, px: 2} }>
                     <Typography  variant='h6' color='textPrimary' component='h2' padding={2}> {post.title}</Typography>
-                    <TextField disabled id='content' multiline value={post.content || ''} ></TextField><br/>
+                    <TextField disabled id='content' multiline value={post.content || ''} ></TextField>
+                    {renderDelButtonPost(post)}
                     <Link href={`/publicprofile/${post.creator}`}>By: {post.creatorUsername}</Link>
                 </Box>
 

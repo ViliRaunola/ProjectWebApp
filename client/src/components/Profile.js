@@ -1,9 +1,10 @@
 import { Suspense } from 'react';
 import {useEffect, useState} from 'react'
 import { TextField } from '@mui/material';
-import { Box } from '@mui/system';
+import { Box, width} from '@mui/system';
 import { Typography } from '@mui/material';
 import moment from 'moment'
+import { Container } from '@mui/material';
 
 function Profile() {
     const [user, setUser] = useState({})
@@ -22,43 +23,44 @@ function Profile() {
     }, [])
 
     return (
-        <div>
-          <Box sx={{m: 2}}>
-          <Typography
-              variant='h6'
-              color='textSecondary'
-              component='h2'
-              padding={2}
-              >
-                  Profile Page
-          </Typography>
-            <TextField
-              disabled
-              id="name"
-              label="Name"
-              value={user.name || ''} //Had a problem with the loading of values. Solved by: https://stackoverflow.com/questions/47012169/a-component-is-changing-an-uncontrolled-input-of-type-text-to-be-controlled-erro
-            /><br/><br/>
-            <TextField
-              disabled
-              id="username"
-              label="Username"
-              value={user.username || ''} 
-            /><br/><br/>
-            <TextField
-              disabled
-              id="email"
-              label="Email"
-              value={user.email || ''} 
-            /><br/><br/>
-            <TextField
-              disabled
-              id="created"
-              label="Created"
-              value={moment(user.created).utc().format('DD/MM/YY') || ''} //Source for formatting mongoose time stamp in react: https://stackoverflow.com/questions/62342707/how-to-format-date-from-mongodb-using-react
-            />
-          </Box>
-          
-        </div>
+      <Container sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}} >
+        <Box display='flex' flexDirection="column" sx={{m: 2, width: '100%'}} >
+        <Typography
+            variant='h6'
+            color='textSecondary'
+            component='h2'
+            padding={2}
+            >
+                Profile Page
+        </Typography>
+          <TextField
+            disabled
+            id="name"
+            label="Name"
+            value={user.name || ''} //Had a problem with the loading of values. Solved by: https://stackoverflow.com/questions/47012169/a-component-is-changing-an-uncontrolled-input-of-type-text-to-be-controlled-erro
+          /><br/><br/>
+          <TextField
+            disabled
+            id="username"
+            label="Username"
+            value={user.username || ''} 
+          /><br/><br/>
+          <TextField
+            disabled
+            id="email"
+            label="Email"
+            multiline={true}
+            value={user.email || ''} 
+          /><br/><br/>
+          <TextField
+            disabled
+            id="created"
+            label="Created"
+            value={moment(user.created).utc().format('DD/MM/YY') || ''} //Source for formatting mongoose time stamp in react: https://stackoverflow.com/questions/62342707/how-to-format-date-from-mongodb-using-react
+          />
+        </Box>
+      </Container>
+       
     )
 }
 

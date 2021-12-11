@@ -84,7 +84,7 @@ router.post('/vote', passport.authenticate('jwt', {session: false}), (req, res, 
 
 //Route for deleting comments. Source for $pull https://docs.mongodb.com/manual/reference/operator/update/pull/
 router.post('/comment/delete/:id', passport.authenticate('jwt', {session: false}), (req, res, next) => {
-    Comment.findOneAndRemove({_id: req.params.id}, (err) => {if(err) throw err}, (err) => {
+    Comment.findOneAndRemove({_id: req.params.id}, (err) => {
         if(err) throw err}) //Removes the comment from collection
     Post.updateOne({_id: req.body.postId}, {$pull : {comments: req.params.id}} , (err) => {
         if(err) throw err}) //Removes the comment id from post collection
@@ -92,6 +92,45 @@ router.post('/comment/delete/:id', passport.authenticate('jwt', {session: false}
         if(err) throw err;
         return res.json({success: true})
     })//Goes through the user object removing the comment from the related user) 
+})
+
+
+//Route for deleting a post
+router.post('/post/delete/:id', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+    Post.findOneAndDelete({_id: req.params.id}, (err) => { //Deletes the post from Post collection
+        if(err) throw err }) 
+    User.updateOne({_id: req.body.userId}, {$pull: {posts: req.params.id}}, (err) => { //Deltes the post from User's document
+        if(err) throw err
+    })
+    
+    if(typeof req.body.comments !== 'undefined'){ //Source for checking if it is undefined: https://stackoverflow.com/questions/3390396/how-can-i-check-for-undefined-in-javascript
+        req.body.comments.forEach(comment => {
+            User.updateOne({_id: comment.userId}, {$pull: {comments: comment._id, upVotes: comment._id, downVotes: comment._id}}, (err) => { //Removing each comment from their user's documents
+                if(err) return err;
+            })  
+            if(typeof comment.upVotes !== 'undefined'){
+                comment.upVotes.forEach(userId => { //Goes through the users that have up voted the comment and delete the upvote counts from that user
+                    User.updateOne({_id: userId}, {$pull: {upVotes: comment._id}}, (err) => {
+                          if(err) return err;
+                      })  
+                  })
+            }
+           
+            if(typeof comment.downVotes !== 'undefined'){
+                comment.downVotes.forEach(userId => { //Goes through the users that have down voted the comment and delete the down vote counts from that user
+                    User.updateOne({_id: userId}, {$pull: {downVotes: comment._id}}, (err) => {
+                        if(err) return err;
+                    })  
+                })
+            }
+            Comment.findOneAndDelete({_id: comment._id}, (err) => { //Deletes the comment from database
+                if(err) throw err;
+            })
+
+        })
+        
+    } 
+    return res.json({success: true})
 })
 
 //Route for getting user information.
