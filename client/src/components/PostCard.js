@@ -15,7 +15,7 @@ const PostCard = ({posts}) => {
                         <CardActionArea href={`/post/${post._id}`}> {/* When the card is pressed user is redirected to the card's own page */}
                             <CardContent>
                                 <Typography variant='h5' gutterBottom>{post.title}</Typography>
-                                <Typography variant='body2'>{post.content} </Typography>
+                                <Typography sx={{wordWrap: 'break-word'}} variant='body2'>{post.content} </Typography>
                             </CardContent>
                         </CardActionArea>
                     </Card>
