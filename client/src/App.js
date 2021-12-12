@@ -8,6 +8,7 @@ import Post from './components/Post'
 import CreatePost from './components/CreatePost';
 import PublicProfile from './components/PublicProfile'
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import Home from './components/Home';
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
 
       <Routes>
 
-        <Route path='/' element={<> <ResponsiveAppBar/> </>}></Route>
+        <Route path='/' element={<> <ResponsiveAppBar/> <Home/> </>}></Route>
         <Route path='/posts' element={<> <ResponsiveAppBar/> <Posts/> </>}></Route>
         <Route path='/post/:postId'  element={<> <ResponsiveAppBar/> <Post/> </>}></Route>
         <Route path='/profile' element={<> <ResponsiveAppBar/> <Profile/> </>}></Route>
