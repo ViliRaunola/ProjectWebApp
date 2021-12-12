@@ -35,4 +35,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', apiRouter);
 
+//Logic to determine if the build is in production vs development. 
+//Source for this is from our course's week 11 exercises
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.resolve("..", "client", "build"))); //Telling the server where to find the front end files to serve
+    app.get("*", (req, res) => 
+        res.sendFile(path.resolve("..", "client", "build", "index.html")) //All other requests that are not for the server's router are sent to react that will handel them
+    );
+}else if(process.env.NODE_ENV === "development"){
+    //Required part to make CORS work on development
+    var corsOptions = {
+        origin: 'http://localhost:3000',
+        optionsSuccessStatus: 200,
+    };
+    app.use(cors(corsOptions));
+}
+
+
 module.exports = app;
