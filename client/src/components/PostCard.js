@@ -6,7 +6,7 @@ const PostCard = ({posts, searchWord}) => {
     const filterFunction = (post) => {
         if(searchWord === ''){ //If there is no search word we show all of the posts without filtering
             return post
-        }else if(post.title.includes(searchWord)){ //Checks if the posts title match the search key that user gave. Source: https://www.tabnine.com/academy/javascript/how-to-use-the-includes-method-in-javascript/
+        }else if(post.content.includes(searchWord)){ //Checks if the posts content has match with the search key that user gave. Source: https://www.tabnine.com/academy/javascript/how-to-use-the-includes-method-in-javascript/
             return post
         }
     }
