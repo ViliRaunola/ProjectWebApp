@@ -57,7 +57,7 @@ function Posts() {
                     </Box>)
         }else{
             return( //Only the posts
-                <Box>
+                <Box >
                     <PostCard posts={posts} searchWord={searchWord}/>
                 </Box>
             ) 
@@ -66,7 +66,7 @@ function Posts() {
 
     //It is checked if the session has received any posts from the server. If it has, then they can be displayed.
     return (
-        <Container sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <Container  sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}}>
             
             {/* Posts were found */}
             {!noPosts && <Box>
