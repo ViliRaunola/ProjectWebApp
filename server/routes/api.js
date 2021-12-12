@@ -108,8 +108,11 @@ router.post('/comment/delete/:id', passport.authenticate('jwt', {session: false}
         if(err) throw err}) //Removes the comment id from post collection
     User.updateOne({_id: req.body.userId}, {$pull : {comments: req.params.id, upVotes: req.params.id, downVotes: req.params.id}}, {timestamps:false}, (err) => {
         if(err) throw err;
-        return res.json({success: true})
     })//Goes through the user object removing the comment from the related user) 
+    User.updateMany({}, {$pull : {upVotes: req.params.id, downVotes: req.params.id}}, {timestamps:false}, (err) => { //Removes the deleted comments id from every user's up and down votes
+        if(err) throw err;
+        return res.json({success: true})
+    })
 })
 
 
@@ -164,7 +167,8 @@ router.get('/user/profile',
                                         created: req.user.createdAt,
                                         updated: req.user.updatedAt,
                                         upVotes: req.user.upVotes,
-                                        downVotes: req.user.downVotes}})
+                                        downVotes: req.user.downVotes,
+                                        admin: req.user.admin}})
             });
 
 //Gets all of the comments related to the post which id was given in the parameters.
@@ -272,6 +276,32 @@ router.get('/post/:id', (req, res, next) => {
             return res.status(403).json({message: "Didn't find a post with id:" + req.params['id']})
         }
     })
+})
+
+//Route for creating an admin. It should be turned on only when an admin is created. In normal use it should be commented off.
+//This route doesn't check if the email, password or anything meets any requirements. Only generates admin and thus should be reserved for one time use.
+
+router.post('/admin/create', (req, res, next) => {
+    //Source on bcrypt: https://www.npmjs.com/package/bcryptjs
+    //First bcrypt generates a salt that is now 12 long.
+    bcrypt.genSalt(12, (err, salt) => {                 
+        bcrypt.hash(req.body.password, salt, (err, hash) => { //Has the password using generated salt
+            if(err) throw err;
+            User.create(
+                {
+                    name: req.body.name,
+                    email: req.body.email,
+                    username: req.body.username,
+                    password: hash,                  //When saving the user to the db I use the hashed version of the passoword!!
+                    admin: true
+                },
+                (err, ok) => {
+                    if(err) throw err;
+                    return  res.status(200).json({success: true});
+                }
+            );
+        });
+    });
 })
 
 //For registering a new user to the database

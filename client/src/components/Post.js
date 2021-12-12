@@ -123,7 +123,7 @@ const Post = () => {
 
     //Check that the comment is from the user so the deletion button can be shown
     const renderButtonsComment = (comment) => {
-        if(decodedJwt.id === comment.userId){
+        if(decodedJwt.id === comment.userId || user.admin){
             return(
                 <Box  display='flex' flexDirection="row-reverse">
                     <DelButton contentObj={comment} onDelete={removeComment} />
@@ -135,7 +135,7 @@ const Post = () => {
 
     //Logick to check if the user has logged in. If they are not then these buttons are not showed to them
     const renderButtonsPost = (post) => {
-        if(decodedJwt.id === post.creator){
+        if(decodedJwt.id === post.creator || user.admin){
             return(
                 <Box  display='flex' flexDirection="row-reverse">
                     <DelButton contentObj={post} onDelete={deletePost}/>
