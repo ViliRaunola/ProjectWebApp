@@ -226,7 +226,6 @@ const Post = () => {
     }
 
 
-    //TODO: Add last edited time stamps
     //Source for checking wether the fetches are complete: https://www.youtube.com/watch?v=k2Zk5cbiZhg&t=552s&ab_channel=TraversyMedia
     return loading ? (<p>Loading</p>) : (
         <div>
@@ -234,7 +233,7 @@ const Post = () => {
             <Container sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}} >
                 <Box display='flex' flexDirection="column" sx={{width: '75%', justifyContent: 'center',border: 1, mt: 4, pb: 2, px: 2} }>
                     <Typography  variant='h6' color='textPrimary' component='h2' padding={2}> {post.title}</Typography>
-                    <Typography sx={{mr: 'auto'}} variant='subtitle1' color='textPrimary' component='subtitle1' padding={0}>Last edited: {moment(post.updatedAt).utc().local().format('DD/MM/YY HH:mm') || ''} </Typography> {/* //Source for formatting mongoose time stamp in react: https://stackoverflow.com/questions/62342707/how-to-format-date-from-mongodb-using-react</Typography> */}
+                    <Typography sx={{mr: 'auto'}} color='textPrimary' padding={0}>Last edited: {moment(post.updatedAt).utc().local().format('DD/MM/YY HH:mm') || ''} </Typography> {/* //Source for formatting mongoose time stamp in react: https://stackoverflow.com/questions/62342707/how-to-format-date-from-mongodb-using-react</Typography> */}
                     <TextField required disabled={editPost} id='content' multiline value={post.content || ''} onChange={postOnChange}></TextField>
                     {renderButtonsPost(post)}
                     {renderSubmitButtonPost(post)}
@@ -245,7 +244,7 @@ const Post = () => {
                 {/* Making sure that server returned comments. If it didn't this won't be run */}
                 {comments && comments.map((comment) => (
                     <Box key={comment._id || 0} display='flex' flexDirection="column" sx={{width: '50%',border: 1, borderColor: 'grey.500' , mt: 4, p: 2} }>
-                        <Typography sx={{mr: 'auto'}} variant='subtitle1' color='textPrimary' component='subtitle1' padding={0}>Last edited: {moment(comment.updatedAt).utc().local().format('DD/MM/YY HH:mm') || ''} </Typography> {/* //Source for formatting mongoose time stamp in react: https://stackoverflow.com/questions/62342707/how-to-format-date-from-mongodb-using-react</Typography> */}
+                        <Typography sx={{mr: 'auto'}} color='textPrimary' padding={0}>Last edited: {moment(comment.updatedAt).utc().local().format('DD/MM/YY HH:mm') || ''} </Typography> {/* //Source for formatting mongoose time stamp in react: https://stackoverflow.com/questions/62342707/how-to-format-date-from-mongodb-using-react</Typography> */}
                         <Box display='flex' flexDirection="row">
                             <TextField sx={{flexGrow: 1}} disabled={commentIdBeignEdited !== comment._id} id='content' multiline value={comment.content || ''} onChange={(event) => commentOnChange(event, comment._id)}></TextField>
                             <Voting comment={comment} user={user}/>

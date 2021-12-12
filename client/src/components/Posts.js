@@ -3,6 +3,7 @@ import { Box } from '@mui/system';
 import {useEffect, useState} from 'react'
 import { Suspense } from 'react';
 import PostCard from './PostCard';
+import Search from './Search'
 
 function Posts() {
 
@@ -15,8 +16,9 @@ function Posts() {
     const totalPages = Math.ceil(posts.length / postsOnPage) //Calculate all of the pages that are required
     const [noPosts, setNoPosts] = useState(true)    //Keeps track wether a server has given any posts
     const [showPager, setShowPager] = useState(false) //Value that determines wether the pager is used or not
+    const [searchWord, setSearchWord] = useState('') //Keeps track of the search term
 
-    const handleChange = (event, value) => { //When the page is changed we get the new page number we are on
+    const handleChange = (event, value) => { //When the page number is changed we get the new page number we are on
         setPage(value);
     };
 
@@ -37,6 +39,10 @@ function Posts() {
         })
     }, [])
 
+    const whenSearchChanging = (event) => {
+        setSearchWord(event.target.value)
+    }
+
     //Get the posts that are to be shown at a spesific page
     const indexLastPost = page * postsOnPage
     const indexFirstPost = indexLastPost - postsOnPage
@@ -44,15 +50,15 @@ function Posts() {
 
     //function to determine if the pager is used or not
     const showPagerFunction = () =>{
-        if(showPager){ //Returning the posts using pager
+        if(showPager && searchWord === ''){ //Returning the posts using pager if there are more than 10 posts AND there is no active search
             return (<Box>
-                        <PostCard posts={postsToShow}/>
+                        <PostCard posts={postsToShow} searchWord={searchWord}/>
                         <Pagination count={totalPages} page={page} onChange={handleChange} />
                     </Box>)
         }else{
             return( //Only the posts
                 <Box>
-                    <PostCard posts={posts}/>
+                    <PostCard posts={posts} searchWord={searchWord}/>
                 </Box>
             ) 
         }
@@ -63,7 +69,11 @@ function Posts() {
         <Container sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}}>
             
             {/* Posts were found */}
-            {!noPosts && showPagerFunction()}
+            {!noPosts && <Box>
+                            <Search onChangeListener={whenSearchChanging}/>
+                            {showPagerFunction()}
+                        </Box>
+            }
 
             {/* No posts were found */}
             {noPosts && <Box>
