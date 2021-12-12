@@ -51,7 +51,7 @@ function PublicProfile() {
               disabled
               id="created"
               label="Created"
-              value={moment(user.created).utc().format('DD/MM/YY') || ''} //Source for formatting mongoose time stamp in react: https://stackoverflow.com/questions/62342707/how-to-format-date-from-mongodb-using-react
+              value={moment(user.created).utc().local().format('DD/MM/YY') || ''} //Source for formatting mongoose time stamp in react: https://stackoverflow.com/questions/62342707/how-to-format-date-from-mongodb-using-react
             />
           </Box>
         </Container>
