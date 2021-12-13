@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import Input from '@mui/material/Input';
 import { Button } from "@mui/material";
 
-
+//Login component. 
 function Login() {
 
     let navigate = useNavigate();
@@ -12,6 +12,7 @@ function Login() {
     const [user, setUser] = useState({})
     const [err, setErr] = useState('')
 
+    //Function that stores the user inputs
     const whenChanging = (event) => {
         setUser({...user, [event.target.id]: event.target.value})
     }
@@ -43,12 +44,7 @@ function Login() {
     return (
         <div>
             
-            <Typography
-                variant='h6'
-                color='textSecondary'
-                component='h2'
-                padding={2}
-                >
+            <Typography variant='h6' color='textSecondary' component='h2' padding={2}>
                     Please Login To Use All Of The Features
             </Typography>
 
@@ -60,14 +56,10 @@ function Login() {
                 </form>
             </div>
 
-            {err && (<Typography
-                variant='h7'
-                color='red'
-                component='h3'
-                padding={2}
-                >
-                   {err}
-                </Typography>)}
+            {/* Here is shown the error that was received from the server */}
+            {err && (<Typography variant='h7' color='red' component='h3' padding={2}>
+                        {err}
+                    </Typography>)}
             
         </div>
     )

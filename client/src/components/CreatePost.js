@@ -35,12 +35,7 @@ const CreatePost = () => {
     return (
         
         <Container sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}} >
-            <Typography
-                variant='h6'
-                color='textSecondary'
-                component='h2'
-                padding={2}
-                >
+            <Typography variant='h6' color='textSecondary' component='h2' padding={2}>
                     Here you can submit your own post
             </Typography>
 

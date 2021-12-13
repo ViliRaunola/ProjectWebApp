@@ -4,6 +4,8 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
 
+//Component that handles the display of vote buttons and the functionality of them. 
+//Takes 2 props. One is the comment that is beign voted on. Other is the user that votes
 const Voting = ({comment, user}) => {
 
     const [upVotes, setUpVotes] = useState(0)
@@ -11,11 +13,13 @@ const Voting = ({comment, user}) => {
 
     var jwt = sessionStorage.getItem('token');
 
+    //Reads the lenght of the list that contains the user id's that have voted on the comment
     useEffect(() => {
-        setUpVotes(comment.upVotes.length)
+        setUpVotes(comment.upVotes.length) 
         setDownVotes(comment.downVotes.length)
     }, [])
 
+    //Sends upvote command to server
     const sendUpVote = () => {
         fetch(`/api/vote`,{
             method: 'POST',
@@ -30,13 +34,14 @@ const Voting = ({comment, user}) => {
         })
     }
 
+    //Sends down vote command to server
     const sendDownVote = () => {
         fetch(`/api/vote`,{
             method: 'POST',
             headers: {'Content-type': 'application/json', 'Authorization': `Bearer ${jwt}`},
             body: JSON.stringify({commentId: comment._id, downVote: true, upVote: false, userId: user.id}),
             mode: 'cors'
-        }).then(res => res.json()) //TODO: Maybe check the error when non logged in user tries to vote?
+        }).then(res => res.json()) 
             .then(data => {
                 if(data.success){ //Waiting for the server to response. 
                     window.location.reload(false);
@@ -44,8 +49,6 @@ const Voting = ({comment, user}) => {
         })
     }
 
-
-    //Source for checking wether the fetches are complete: https://www.youtube.com/watch?v=k2Zk5cbiZhg&t=552s&ab_channel=TraversyMedia
     return (
        <Box sx={{mt: 'auto'}} display='flex' flexDirection="column">
             <Button onClick={sendUpVote} disabled={false} sx={{color: 'green'}} size='small' startIcon={<ArrowUpwardIcon/>}>{upVotes}</Button>

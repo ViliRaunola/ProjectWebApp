@@ -14,10 +14,10 @@ const Post = () => {
 
     let navigate = useNavigate();
 
-    const {postId} = useParams()
-    const [post, setPost] = useState({})
+    const {postId} = useParams() //Get the url parameter
+    const [post, setPost] = useState({}) 
     const [comments, setComments] = useState([{}])
-    const [newComment, setNewComment] = useState({})
+    const [newComment, setNewComment] = useState({}) //Stores the edited comment
     const [user, setUser] = useState({})
     const [loading, setLoading] = useState(true)
     const [editPost, setEditPost] = useState(true)
@@ -26,23 +26,25 @@ const Post = () => {
     const [updatedComment, setUpdatedComment] = useState({})
 
     var jwt = sessionStorage.getItem('token');
-    var decodedJwt = '0'
+    var decodedJwt = '0' 
 
     //If there was jwt, it is decoded. Would cause an error if there was no token and it was tried to be decoded
     if(jwt){
         decodedJwt = jwt_decode(jwt);  //Source for decoding jwt: https://www.npmjs.com/package/jwt-decode
     }
     
-    //Keeps track of the input fields and creates the user object as the fields are beign filled.
+    //Keeps track of the input fields and creates the newComment object as the content is changed.
     const whenChanging = (event) => {
         setNewComment({...newComment, [event.target.id]: event.target.value})
     }  
 
+    //Keeps track of the post's content when it is beign edited
     const postOnChange = (event) => {
         setPost({...post, [event.target.id]: event.target.value})
     }
 
     //Source for updating a object inside an array: https://www.robinwieruch.de/react-update-item-in-list/
+    //Function to track a spesific comment that is beign edited
     const commentOnChange = (event, id) => { //Get the event and the id of the comment that is beign changed
         const newComments = comments.map((comment) => { //Create a new comments list from the old comments list
             if(comment._id === id){ //If a comment is found that matches the comment that is beign edited it is changed
@@ -73,7 +75,7 @@ const Post = () => {
     }
     
 
-    //Retreives the post and comments that are assosiated with it.
+    //Retreives the post and comments that are assosiated with it. Ran on page refresh
     useEffect(() => {
         fetch(`/api/post/${postId}`)
         .then(res => res.json())
@@ -99,7 +101,7 @@ const Post = () => {
     }, [])
 
     //Ran when clicked edit button.
-    //Toggles edits to post
+    //Toggles edits to post aka disables/ enables the edit
     const allowEditPost = () => {
         if(editPost){
             setEditPost(false)
@@ -168,6 +170,7 @@ const Post = () => {
         
     }
 
+    //Sends the post and its comments to the server when the post is wanted to be deleted.
     const deletePost = (post) => {
         fetch(`/api/post/delete/${post._id}`,{
             method: 'POST',
@@ -182,19 +185,21 @@ const Post = () => {
         })
     }
 
+    //When user has clicked edit, a submit button is shown
     const renderSubmitButtonPost = (post) => {
         if(!editPost){
             return (<SubmitButton whenClicked={sendUpdatedPost} object={post}/>)
         }
     }
 
+    //When user has clicked edit, a submit button is shown
     const renderSubmitButtonComment = (comment) => {
         if(!editComment && comment._id === commentIdBeignEdited){
             return (<SubmitButton whenClicked={sendUpdatedComment} object={comment}/>)
         }
     }
 
-
+    //Sending comment with new content to the server for updation
     const sendUpdatedComment = (comment) => {
         fetch('/api/comment/modify', {
             method: 'POST',
@@ -211,6 +216,7 @@ const Post = () => {
             })
     }
 
+    //Sends post wiht new content to the server 
     const sendUpdatedPost = (post) => {
         fetch('/api/post/modify', {
             method: 'POST',
@@ -233,13 +239,14 @@ const Post = () => {
             {/* The Post is shown here */}
             <Container sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}} >
                 <Box display='flex' flexDirection="column" sx={{width: '75%', justifyContent: 'center',border: 1, mt: 4, pb: 2, px: 2} }>
+                    
                     <Typography  variant='h6' color='textPrimary' component='h2' padding={2}> {post.title}</Typography>
                     <Typography sx={{mr: 'auto'}} color='textPrimary' padding={0}>Last edited: {moment(post.updatedAt).utc().local().format('DD/MM/YY HH:mm') || ''} </Typography> {/* //Source for formatting mongoose time stamp in react: https://stackoverflow.com/questions/62342707/how-to-format-date-from-mongodb-using-react</Typography> */}
+                    
                     <Box display='flex' flexDirection="row" >
                         <TextField sx={{flexGrow: 1}} required disabled={editPost} id='content' multiline value={post.content || ''} onChange={postOnChange}></TextField>
                         <VotingPost post={post} user={user} />
                     </Box>
-                    
                     
                     {renderButtonsPost(post)}
                     {renderSubmitButtonPost(post)}
@@ -250,13 +257,18 @@ const Post = () => {
                 {/* Making sure that server returned comments. If it didn't this won't be run */}
                 {comments && comments.map((comment) => (
                     <Box key={comment._id || 0} display='flex' flexDirection="column" sx={{width: '50%',border: 1, borderColor: 'grey.500' , mt: 4, p: 2} }>
+                        
                         <Typography sx={{mr: 'auto'}} color='textPrimary' padding={0}>Last edited: {moment(comment.updatedAt).utc().local().format('DD/MM/YY HH:mm') || ''} </Typography> {/* //Source for formatting mongoose time stamp in react: https://stackoverflow.com/questions/62342707/how-to-format-date-from-mongodb-using-react</Typography> */}
+                        
                         <Box display='flex' flexDirection="row">
                             <TextField sx={{flexGrow: 1}} disabled={commentIdBeignEdited !== comment._id} id='content' multiline value={comment.content || ''} onChange={(event) => commentOnChange(event, comment._id)}></TextField>
                             <Voting comment={comment} user={user}/>
+                        
                         </Box>
+                        
                         {renderButtonsComment(comment)}
                         {renderSubmitButtonComment(comment)}
+                        
                         <Link sx={{width: '20%'}} href={`/publicprofile/${comment.userId}`}>By: {comment.creatorUsername}</Link>
                     </Box>
                 ))}

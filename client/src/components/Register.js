@@ -44,12 +44,8 @@ const Register = () => {
     return (
         <div>
             
-        <Typography
-            variant='h6'
-            color='inherit'
-            padding={2}
-            >
-                Register here!
+        <Typography variant='h6' color='inherit' padding={2}>
+            Register here!
         </Typography>
 
         <div>
@@ -58,12 +54,8 @@ const Register = () => {
                 <Input required={true} placeholder="Username" type="text" id="username"></Input><br/><br/>
                 <Input required={true} placeholder="Email" type="email" id="email"></Input><br/><br/>
                 <Input required={true} placeholder="Password" type="password" id="password"></Input>
-                <Typography
-                    variant='subtitle1'
-                    color='inherit'
-                    padding={2}
-                    >
-                        The password must be 10 characters long, have upper- and lowercase, a number and a symbol.
+                <Typography variant='subtitle1' color='inherit' padding={2}>
+                    The password must be 10 characters long, have upper- and lowercase, a number and a symbol.
                 </Typography>
                 
                 <br/>
@@ -72,12 +64,7 @@ const Register = () => {
         </div>
         
         {/* If there would be an error with registeration it would be shown here */}
-        {err && (<Typography
-                variant='h7'
-                color='red'
-                component='h3'
-                padding={2}
-                >
+        {err && (<Typography variant='h7' color='red' component='h3' padding={2}>
                    {err}
                 </Typography>)}
         

@@ -1,5 +1,6 @@
 import { Container, Typography, Box } from "@mui/material"
 
+//Home component. Gives the user some idea what to expect from the site.
 const Home = () => {
     return (
         <Container  sx={{display:'flex', flexDirection: 'column', alignItems: 'center'}}>

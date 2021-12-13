@@ -4,18 +4,22 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
 
-const Voting = ({post, user}) => {
+//Component that handles the display of vote buttons and the functionality of them. 
+//Takes 2 props. One is the post that is beign voted on. Other is the user that votes
+const VotingPost = ({post, user}) => {
 
     const [upVotes, setUpVotes] = useState(0)
     const [downVotes, setDownVotes] = useState(0)
 
     var jwt = sessionStorage.getItem('token');
 
+    //Reads the lenght of the list that contains the user id's that have voted on the post
     useEffect(() => {
         setUpVotes(post.upVotes.length)
         setDownVotes(post.downVotes.length)
     }, [])
 
+    //Sends upvote command to server
     const sendUpVote = () => {
         fetch(`/api/vote/post`,{
             method: 'POST',
@@ -30,6 +34,7 @@ const Voting = ({post, user}) => {
         })
     }
 
+    //Sends down vote command to server
     const sendDownVote = () => {
         fetch(`/api/vote/post`,{
             method: 'POST',
@@ -54,4 +59,4 @@ const Voting = ({post, user}) => {
     )
 }
 
-export default Voting
+export default VotingPost

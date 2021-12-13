@@ -12,11 +12,11 @@ let postSchema = new Schema({
         required: true
     },
     creatorUsername: {type: String},
-    upVotes: [mongoose.ObjectId],
-    downVotes: [mongoose.ObjectId],
+    upVotes: [mongoose.ObjectId], //Users that have voted
+    downVotes: [mongoose.ObjectId], //Users that have voted
     creator: mongoose.ObjectId,
     comments: [mongoose.ObjectId]
-},{timestamps: true});
+},{timestamps: true}); //Keeps track of creation and update times
 
 //Using time stapmps source: https://masteringjs.io/tutorials/mongoose/timestamps
 
