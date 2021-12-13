@@ -21,6 +21,8 @@ let userSchema = new Schema({
     posts: [mongoose.ObjectId],
     upVotes: [mongoose.ObjectId],
     downVotes: [mongoose.ObjectId],
+    upVotesPosts: [mongoose.ObjectId],
+    downVotesPosts: [mongoose.ObjectId],
     comments: [mongoose.ObjectId],
     admin: Boolean,
 },{timestamps: true});

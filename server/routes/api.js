@@ -53,7 +53,7 @@ router.get('/user/public/:id', (req, res, next) => {
 
 //Route for voting comments
 router.post('/vote', passport.authenticate('jwt', {session: false}), (req, res, next) => {
-    //If the vote was up vote we add the post id to the user's upVotes list.
+    //If the vote was up vote we add the comment id to the user's upVotes list.
     //Since each user has only one vote we delete possible duplicates first.
     if(req.body.upVote){
         User.updateOne({_id: req.body.userId}, {$pull: {upVotes: req.body.commentId}}, {timestamps:false}, (err) => { //Clears the user's upVotes list from this vote incase of duplicate
@@ -100,6 +100,55 @@ router.post('/vote', passport.authenticate('jwt', {session: false}), (req, res, 
 })
 
 
+//*Route for voting posts
+router.post('/vote/post', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+    //If the vote was up vote we add the post id to the user's upVotes list.
+    //Since each user has only one vote we delete possible duplicates first.
+    if(req.body.upVote){
+        User.updateOne({_id: req.body.userId}, {$pull: {upVotesPosts: req.body.postId}}, {timestamps:false}, (err) => { //Clears the user's upVotes list from this vote incase of duplicate
+            if(err) throw err
+            User.updateOne({_id: req.body.userId}, {$push: {upVotesPosts: req.body.postId}}, {timestamps:false}, (err) => { //Adds the post id to User's upVotes list
+                if(err) throw err;
+                User.updateOne({_id: req.body.userId}, {$pull: {downVotesPosts: req.body.postId}}, {timestamps:false}, (err) => { //Clears the user's downVotes list from this vote incase of duplicate
+                    if(err) throw err;
+                    Post.updateOne({_id: req.body.postId}, {$pull: {upVotes: req.body.userId}}, {timestamps:false}, (err) => { //Clears the comments upVotes list from this vote incase of duplicate
+                        if(err) throw err;
+                        Post.updateOne({_id: req.body.postId}, {$push: {upVotes: req.body.userId}}, {timestamps:false}, (err) => { //Adds the user id to Comment's upVote list
+                            if(err) throw err;
+                            Post.updateOne({_id: req.body.postId}, {$pull: {downVotes: req.body.userId}}, {timestamps:false}, (err) => { //Clears the Comment's downVotes list from this vote incase of duplicate
+                                if(err) throw err;
+                                return res.json({success: true})
+                            })
+                        })
+                    })
+                })
+            })
+        })
+    //Here the same is the same logic but for down vote
+    }else if(req.body.downVote){
+        User.updateOne({_id: req.body.userId}, {$pull: {downVotesPosts: req.body.postId}}, {timestamps:false}, (err) => { //Clears the user's upVotes list from this vote incase of duplicate
+            if(err) throw err
+            User.updateOne({_id: req.body.userId}, {$push: {downVotesPosts: req.body.postId}}, {timestamps:false}, (err) => { //Adds the post id to User's upVotes list
+                if(err) throw err;
+                User.updateOne({_id: req.body.userId}, {$pull: {upVotesPosts: req.body.postId}}, {timestamps:false}, (err) => { //Clears the user's downVotes list from this vote incase of duplicate
+                    if(err) throw err;
+                    Post.updateOne({_id: req.body.postId}, {$pull: {downVotes: req.body.userId}}, {timestamps:false}, (err) => { //Clears the comments upVotes list from this vote incase of duplicate
+                        if(err) throw err;
+                        Post.updateOne({_id: req.body.postId}, {$push: {downVotes: req.body.userId}}, {timestamps:false}, (err) => { //Adds the user id to Comment's upVote list
+                            if(err) throw err;
+                            Post.updateOne({_id: req.body.postId}, {$pull: {upVotes: req.body.userId}}, {timestamps:false}, (err) => { //Clears the Comment's downVotes list from this vote incase of duplicate
+                                if(err) throw err;
+                                return res.json({success: true})
+                            })
+                        })
+                    })
+                })
+            })
+        })
+    }
+})
+
+
 //Route for deleting comments. Source for $pull https://docs.mongodb.com/manual/reference/operator/update/pull/
 router.post('/comment/delete/:id', passport.authenticate('jwt', {session: false}), (req, res, next) => {
     Comment.findOneAndRemove({_id: req.params.id}, (err) => {
@@ -122,6 +171,10 @@ router.post('/post/delete/:id', passport.authenticate('jwt', {session: false}), 
         if(err) throw err }) 
     User.updateOne({_id: req.body.userId}, {$pull: {posts: req.params.id}}, {timestamps:false}, (err) => { //Deltes the post from User's document
         if(err) throw err
+    })
+    User.updateMany({}, {$pull : {upVotesPosts: req.params.id, downVotesPosts: req.params.id}}, {timestamps:false}, (err) => { //Removes the deleted comments id from every user's up and down votes
+        if(err) throw err;
+        return res.json({success: true})
     })
     
     if(typeof req.body.comments !== 'undefined'){ //Source for checking if it is undefined: https://stackoverflow.com/questions/3390396/how-can-i-check-for-undefined-in-javascript
