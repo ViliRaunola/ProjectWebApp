@@ -1,4 +1,6 @@
-import { Card, CardActionArea, CardContent, Container, TextField, Typography, Box } from '@mui/material'
+import { Card, CardActionArea, CardContent, Container, TextField, Typography, Box, CardActions, Button } from '@mui/material'
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'; //Source: https://mui.com/components/material-icons/
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 const PostCard = ({posts, searchWord}) => {
 
@@ -28,6 +30,12 @@ const PostCard = ({posts, searchWord}) => {
                                 <Typography variant="body2" >{post.content}</Typography>
                             </CardContent>
                         </CardActionArea>
+                        <CardActions>
+                            <Box sx={{mt: 'auto'}} display='flex' flexDirection="row">
+                                <Button disabled={true} sx={{color: 'green'}} size='small' startIcon={<ArrowUpwardIcon/>}>{post.upVotes.length}</Button>
+                                <Button disabled={true} sx={{color: 'red'}} startIcon={<ArrowDownwardIcon/>}>{post.downVotes.length}</Button>
+                             </Box>
+                        </CardActions>
                     </Card>
                    
                 ))}

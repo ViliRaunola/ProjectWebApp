@@ -58,7 +58,7 @@ router.post('/vote', passport.authenticate('jwt', {session: false}), (req, res, 
     if(req.body.upVote){
         User.updateOne({_id: req.body.userId}, {$pull: {upVotes: req.body.commentId}}, {timestamps:false}, (err) => { //Clears the user's upVotes list from this vote incase of duplicate
             if(err) throw err
-            User.updateOne({_id: req.body.userId}, {$push: {upVotes: req.body.commentId}}, {timestamps:false}, (err) => { //Adds the post id to User's upVotes list
+            User.updateOne({_id: req.body.userId}, {$push: {upVotes: req.body.commentId}}, {timestamps:false}, (err) => { //Adds the comment id to User's upVotes list
                 if(err) throw err;
                 User.updateOne({_id: req.body.userId}, {$pull: {downVotes: req.body.commentId}}, {timestamps:false}, (err) => { //Clears the user's downVotes list from this vote incase of duplicate
                     if(err) throw err;
@@ -79,7 +79,7 @@ router.post('/vote', passport.authenticate('jwt', {session: false}), (req, res, 
     }else if(req.body.downVote){
         User.updateOne({_id: req.body.userId}, {$pull: {downVotes: req.body.commentId}}, {timestamps:false}, (err) => { //Clears the user's downVotes list from this vote incase of duplicate
             if(err) throw err
-            User.updateOne({_id: req.body.userId}, {$push: {downVotes: req.body.commentId}}, {timestamps:false}, (err) => { //Adds the post id to User's downVotes list
+            User.updateOne({_id: req.body.userId}, {$push: {downVotes: req.body.commentId}}, {timestamps:false}, (err) => { //Adds the comment id to User's downVotes list
                 if(err) throw err;
                 User.updateOne({_id: req.body.userId}, {$pull: {upVotes: req.body.commentId}}, {timestamps:false}, (err) => { //Clears the user's upVotes list from this vote incase of duplicate
                     if(err) throw err;
@@ -111,11 +111,11 @@ router.post('/vote/post', passport.authenticate('jwt', {session: false}), (req, 
                 if(err) throw err;
                 User.updateOne({_id: req.body.userId}, {$pull: {downVotesPosts: req.body.postId}}, {timestamps:false}, (err) => { //Clears the user's downVotes list from this vote incase of duplicate
                     if(err) throw err;
-                    Post.updateOne({_id: req.body.postId}, {$pull: {upVotes: req.body.userId}}, {timestamps:false}, (err) => { //Clears the comments upVotes list from this vote incase of duplicate
+                    Post.updateOne({_id: req.body.postId}, {$pull: {upVotes: req.body.userId}}, {timestamps:false}, (err) => { //Clears the post upVotes list from this vote incase of duplicate
                         if(err) throw err;
-                        Post.updateOne({_id: req.body.postId}, {$push: {upVotes: req.body.userId}}, {timestamps:false}, (err) => { //Adds the user id to Comment's upVote list
+                        Post.updateOne({_id: req.body.postId}, {$push: {upVotes: req.body.userId}}, {timestamps:false}, (err) => { //Adds the user id to Post's upVote list
                             if(err) throw err;
-                            Post.updateOne({_id: req.body.postId}, {$pull: {downVotes: req.body.userId}}, {timestamps:false}, (err) => { //Clears the Comment's downVotes list from this vote incase of duplicate
+                            Post.updateOne({_id: req.body.postId}, {$pull: {downVotes: req.body.userId}}, {timestamps:false}, (err) => { //Clears the Post's downVotes list from this vote incase of duplicate
                                 if(err) throw err;
                                 return res.json({success: true})
                             })
@@ -134,9 +134,9 @@ router.post('/vote/post', passport.authenticate('jwt', {session: false}), (req, 
                     if(err) throw err;
                     Post.updateOne({_id: req.body.postId}, {$pull: {downVotes: req.body.userId}}, {timestamps:false}, (err) => { //Clears the comments upVotes list from this vote incase of duplicate
                         if(err) throw err;
-                        Post.updateOne({_id: req.body.postId}, {$push: {downVotes: req.body.userId}}, {timestamps:false}, (err) => { //Adds the user id to Comment's upVote list
+                        Post.updateOne({_id: req.body.postId}, {$push: {downVotes: req.body.userId}}, {timestamps:false}, (err) => { //Adds the user id to Post's upVote list
                             if(err) throw err;
-                            Post.updateOne({_id: req.body.postId}, {$pull: {upVotes: req.body.userId}}, {timestamps:false}, (err) => { //Clears the Comment's downVotes list from this vote incase of duplicate
+                            Post.updateOne({_id: req.body.postId}, {$pull: {upVotes: req.body.userId}}, {timestamps:false}, (err) => { //Clears the Post's downVotes list from this vote incase of duplicate
                                 if(err) throw err;
                                 return res.json({success: true})
                             })
