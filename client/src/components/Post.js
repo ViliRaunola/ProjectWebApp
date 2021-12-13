@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import DelButton from './DelButton';
 import Voting from './Voting';
+import VotingPost from './VotingPost';
 import EditButton from './EditButton'
 import SubmitButton from './SubmitButton'
 import moment from 'moment'
@@ -234,7 +235,12 @@ const Post = () => {
                 <Box display='flex' flexDirection="column" sx={{width: '75%', justifyContent: 'center',border: 1, mt: 4, pb: 2, px: 2} }>
                     <Typography  variant='h6' color='textPrimary' component='h2' padding={2}> {post.title}</Typography>
                     <Typography sx={{mr: 'auto'}} color='textPrimary' padding={0}>Last edited: {moment(post.updatedAt).utc().local().format('DD/MM/YY HH:mm') || ''} </Typography> {/* //Source for formatting mongoose time stamp in react: https://stackoverflow.com/questions/62342707/how-to-format-date-from-mongodb-using-react</Typography> */}
-                    <TextField required disabled={editPost} id='content' multiline value={post.content || ''} onChange={postOnChange}></TextField>
+                    <Box display='flex' flexDirection="row" >
+                        <TextField sx={{flexGrow: 1}} required disabled={editPost} id='content' multiline value={post.content || ''} onChange={postOnChange}></TextField>
+                        <VotingPost post={post} user={user} />
+                    </Box>
+                    
+                    
                     {renderButtonsPost(post)}
                     {renderSubmitButtonPost(post)}
                     <Link sx={{width: '10%'}} href={`/publicprofile/${post.creator}`}>By: {post.creatorUsername}</Link>

@@ -174,7 +174,6 @@ router.post('/post/delete/:id', passport.authenticate('jwt', {session: false}), 
     })
     User.updateMany({}, {$pull : {upVotesPosts: req.params.id, downVotesPosts: req.params.id}}, {timestamps:false}, (err) => { //Removes the deleted comments id from every user's up and down votes
         if(err) throw err;
-        return res.json({success: true})
     })
     
     if(typeof req.body.comments !== 'undefined'){ //Source for checking if it is undefined: https://stackoverflow.com/questions/3390396/how-can-i-check-for-undefined-in-javascript
