@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var config = require('./config/database')
 require('dotenv').config(); //Used to access the custom enviroment variable
 const passport = require('passport');
+var cors = require('cors');
 
 //SECRET=LAKSJD!"#Lflkjds¨2å13kjlj
 
@@ -39,9 +40,7 @@ app.use('/api', apiRouter);
 
 //Logic to determine if the build is in production vs development. 
 //Source for this is from our course's week 11 exercises
-console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV === "production") {
-    console.log('moi')
     app.use(express.static(path.resolve("..", "client", "build"))); //Telling the server where to find the front end files to serve
     app.get("*", (req, res) => {
         res.sendFile(path.resolve("..", "client", "build", "index.html")) //All other requests that are not for the server's router are sent to react that will handel them

@@ -12,7 +12,7 @@ function Posts() {
 
     const [posts, setPosts] = useState([{}])   //All of the posts that are fetched from the database
     const [page, setPage] = useState(1);    //Keeps track of the current page that we are on
-    const postsOnPage = 5;  //Can choose how many posts you want to show per one page
+    const postsOnPage = 4;  //Can choose how many posts you want to show per one page
     const totalPages = Math.ceil(posts.length / postsOnPage) //Calculate all of the pages that are required
     const [noPosts, setNoPosts] = useState(true)    //Keeps track wether a server has given any posts
     const [showPager, setShowPager] = useState(false) //Value that determines wether the pager is used or not
